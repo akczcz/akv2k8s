@@ -2,6 +2,7 @@
 This is LAB implementation of akv2k8s in AKS.
 LAB uses imperative way of deployment (Azure CLI commands in this case).
 You will use probably declarative way of deployment resources in your environment, in a meaning of definition of service instance using Azure Resource Manager (ARM) templates, Bicep, or Terraform type of deployment.
+Moreover, you will probably orchestrate such declarative way of deployment in your Continuous Integration/Continuous Deployment pipelines (Using Azure DevOps, or Github, or any other tools).
 
 # Prerequisities
 You need such prerequisities:
@@ -11,7 +12,7 @@ You need such prerequisities:
 
 Let's use Azure CLI for now.
 
-# Preparation tasks - deployment infrastructure in Azure Resource Group
+## Preparation tasks - deployment infrastructure in Azure Resource Group
 
 Create resource group
 ``` azcli
@@ -22,7 +23,7 @@ az group create \
     --resource-group $GROUP_NAME
 ```
 
-## Deployment of ACR
+### Deployment of ACR
 
 Deploy Azure Container Registry (ACR).
 The name of ACR must be globally unique, so exchange the name with your own
@@ -34,9 +35,7 @@ az acr create \
     --name $ACR_NAME \
     --sku Basic
 ```
-## Deployment of Azure KeyVault
-
-## Deployment of User Assigned Managed Identities for AKS
+### Deployment of User Assigned Managed Identities for AKS
 Deploy Azure User Assigned Managed Identity
 ``` azcli
 UAMI_NAME=uami-aks
@@ -68,7 +67,7 @@ UAMI_KUBELET_ID=$(az identity show \
     -o tsv)
 ```
 
-# Deploy Azure KeyVault (AKV) with integration to Azure RBAC
+### Deploy Azure KeyVault (AKV) with integration to Azure RBAC
 Create Azure KeyVault instance
 ``` azcli
 KV_NAME=kv-testaks
@@ -112,7 +111,7 @@ USER_NAME_OBJECTID=$(az ad signed-in-user show \
     --query "objectId" \
     -o tsv)
 ```
-Add role assignment of Azure Key Vault Secret Officer to user identity
+Add built in role assignment of Azure Key Vault Secret Officer https://docs.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#key-vault-secrets-officer to user identity
 ``` azcli
 az role assignment create \
     --assignee $USER_NAME_OBJECTID \
@@ -120,7 +119,7 @@ az role assignment create \
     --scope $KV_ID
 ```
 
-## Deployment of additional RBAC assignmnet
+### Deployment of additional RBAC assignmnet
 
 Map need access rights for managed identities, AKS cluster's User Assigned Managed Identity has to have access rights to AKS's clusters Kubelet User Assigned Managed Identity.
 Export AKS cluster's User Assigned Managed Identity principalId as environment variable
@@ -139,7 +138,7 @@ az role assignment create \
     --scope $UAMI_KUBELET_ID
 ```
 
-## Deployment of AKS
+### Deployment of AKS
 
 Deploy Azure Kubernetes Services (AKS) with deployment options connected to resources created with previous steps
 ``` azcli
@@ -153,8 +152,5 @@ az aks create \
     --node-count 2 \
     --generate-ssh-keys \
     --name $AKS_NAME
-
-echo $UAMI_ID
-echo $UAMI_KUBELET_ID
 ```
 
