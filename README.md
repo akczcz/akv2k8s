@@ -227,5 +227,54 @@ NOTES:
 Congratulations! You've successfully installed Azure Key Vault to Kubernetes.
 For more information see the documentation at https://akv2k8s.io.
 ```
-### Deploy test resources
+If you come to this point, you sucessfully deployed needed infrastructure including AKS and deployed controller akv2k8s inside kubernetes cluster
+
+### Deploy test resources into Azure KeyVault
+We will deploy test secrets into 
+``` azcli
+KV_NAME=kv-testaks
+SECRET_NAME1="secretname1"
+SECRET_VALUE1="TopSecretPassword"
+az keyvault secret set \
+    --vault-name $KV_NAME \
+    --name $SECRET_NAME1 \
+    --value $SECRET_VALUE1
+
+SECRET_SQL="sqlconnectionstring"
+SECRET_SQL_VALUE="TopSecretConnectionString"
+az keyvault secret set \
+    --vault-name $KV_NAME \
+    --name $SECRET_SQL \
+    --value $SECRET_SQL_VALUE
+```
+you should get output like this:
+```
+user@Azure:~$ az keyvault secret set \
+>     --vault-name $KV_NAME \
+>     --name $SECRET_SQL \
+>     --value $SECRET_SQL_VALUE
+{
+  "attributes": {
+    "created": "2022-01-03T11:57:31+00:00",
+    "enabled": true,
+    "expires": null,
+    "notBefore": null,
+    "recoveryLevel": "Recoverable+Purgeable",
+    "updated": "2022-01-03T11:57:31+00:00"
+  },
+  "contentType": null,
+  "id": "https://kv-testaks.vault.azure.net/secrets/sqlconnectionstring/81d0db1307044c5a83da9fbeb2d115cf",
+  "kid": null,
+  "managed": null,
+  "name": "sqlconnectionstring",
+  "tags": {
+    "file-encoding": "utf-8"
+  },
+  "value": "TopSecretConnectionString"
+}
+```
+
+### Deploy kuberentes mapping objects
+
+### Deploy test application and reference secrets
 
