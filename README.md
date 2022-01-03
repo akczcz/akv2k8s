@@ -446,5 +446,13 @@ Data
 secretname1:  17 bytes
 ```
 
+As you may know, secrets inside kubernetes are stored in etcd database and they are not encrypted, they are encoded with base64 algorithm.
+So, let's try to decode data value from secret and see its value:
+``` azcli
+kubectl -n app get secrets/akv-secret-name1 --template={{.data.secretname1}} | base64 -d
+```
+
+You will see decoded secret value :)
+
 ### Deploy test application and reference secrets
 
