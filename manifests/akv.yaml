@@ -8,7 +8,7 @@ spec:
   vault:
     name: kv-testaks # 2. name of key vault
     object:
-      name: SECRET-NAME1 # 3. name of the akv object
+      name: secretname1 # 3. name of the akv object
       type: secret # 4. akv object type
   output: 
     secret: 
@@ -24,7 +24,7 @@ spec:
   vault:
     name: kv-testaks # 2. name of key vault
     object:
-      name: SECRET-SQL # 3. name of the akv object
+      name: sqlconnectionstring # 3. name of the akv object
       type: secret # 4. akv object type
   output: 
     secret: 

@@ -94,17 +94,6 @@ UAMI_KUBELET_PRINCIPALID=$(az identity show \
     -o tsv)
 ```
 
-delete bellow:
-``` azcli
-UAMI_PRINCIPALID=$(az identity show \
-    --resource-group $GROUP_NAME \
-    --query "principalId" \
-    --name $UAMI_NAME \
-    -o tsv)
-```
-
-
-
 And add accesss rights for Secrets in Azure KeyVault.
 Create such role assignment for Managed Identity, which will AKS use. 
 Add built in role Azure Key Vault Secret user "https://docs.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#key-vault-secrets-user"
