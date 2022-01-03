@@ -229,6 +229,13 @@ For more information see the documentation at https://akv2k8s.io.
 ```
 If you come to this point, you sucessfully deployed needed infrastructure including AKS and deployed controller akv2k8s inside kubernetes cluster
 
+Now you can see, that there are is new type of API resources, try to run:
+```
+kubectl -n akv2k8s api-resources
+```
+and you will see in your output also akvs object type:
+![image](img/akv-API.PNG)
+
 ### Deploy test resources into Azure KeyVault
 We will deploy test secrets into 
 ``` azcli
@@ -273,8 +280,84 @@ user@Azure:~$ az keyvault secret set \
   "value": "TopSecretConnectionString"
 }
 ```
+I let whole id in the output to let you see whole id containing name of the secret (/sqlconnectionstring/) and its version at the end (/81d0db1307044c5a83da9fbeb2d115cf).
+
+You can list created secrets:
+```
+user@Azure:~$ az keyvault secret list --vault-name $KV_NAME -o table
+Name                 Id                                                              ContentType    Enabled    Expires
+-------------------  --------------------------------------------------------------  -------------  ---------  ---------
+secretname1          https://kv-testaks.vault.azure.net/secrets/secretname1                         True
+sqlconnectionstring  https://kv-testaks.vault.azure.net/secrets/sqlconnectionstring                 True
+```
+or in GUI of Azure KeyVault instance.
 
 ### Deploy kuberentes mapping objects
+Let's create namespace for application, we will put our synchronized secrets to that namespace, because, we will reference them to the application in the same namespace
+``` azcli
+NAMESPACE_NAME_APP=app
+kubectl create namespace $NAMESPACE_NAME_APP --dry-run=client -o yaml | kubectl apply -f -
+```
+you should get output like this:
+```
+user@Azure:~$ kubectl create namespace $NAMESPACE_NAME_APP --dry-run=client -o yaml | kubectl apply -f -
+namespace/app created
+```
+Now lets look at the file /manifests/akv.yaml, there are prepared 2 objects in declarative way.
+```
+DIR_NAME=manifests
+mkdir $DIR_NAME
+cd $DIR_NAME
+vi akv.yaml #and put content of file bellow
+```
+Change the values in yaml file to your values, focus on the fields marked with description with numbers and exchange such fields to your values
+``` yaml
+# secrets for Persistent storage
+apiVersion: spv.no/v2beta1
+kind: AzureKeyVaultSecret
+metadata:
+  name: akvs-secret-name1 # 1. name of akvs object
+  namespace: app
+spec:
+  vault:
+    name: kv-testaks # 2. name of key vault
+    object:
+      name: SECRET-NAME1 # 3. name of the akv object
+      type: secret # 4. akv object type
+  output: 
+    secret: 
+      name: akv-secret-name1 # 5. kubernetes secret name
+      dataKey: secretname1 # 6. key to store object value in kubernetes apiVersion: v1
+---
+apiVersion: spv.no/v2beta1
+kind: AzureKeyVaultSecret # 1. name of akvs object
+metadata:
+  name: akvs-secret-sql
+  namespace: app
+spec:
+  vault:
+    name: kv-testaks # 2. name of key vault
+    object:
+      name: SECRET-SQL # 3. name of the akv object
+      type: secret # 4. akv object type
+  output: 
+    secret: 
+      name: akv-sql # 5. kubernetes secret name
+      dataKey: sqlconnectionstring # 6. key to store object value in kubernetes apiVersion: v1
 
+```
+Then finaly save the manifest file:
+![image](img/akv-yaml.PNG)
+
+Now let's deploy such manifests inside kubernetes:
+``` azcli
+kubectl apply -f ~/manifests/akv.yaml
+```
+you should get output like this:
+```
+user@Azure:~/manifests$ kubectl apply -f ~/manifests/akv.yaml
+azurekeyvaultsecret.spv.no/akvs-secret-name1 created
+azurekeyvaultsecret.spv.no/akvs-secret-sql created
+```
 ### Deploy test application and reference secrets
 
