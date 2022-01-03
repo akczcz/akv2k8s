@@ -153,4 +153,27 @@ az aks create \
     --generate-ssh-keys \
     --name $AKS_NAME
 ```
+Get access to AKS cluster
+``` azcli
+# Get cluster credentials
+az aks get-credentials \
+    --resource-group $GROUP_NAME \
+    --name $AKS_NAME
+```
+Try cluster level access using "kubectl" utility
+``` azcli
+kubectl get nodes
+```
+You should obtain result similar to:
+``` 
+user@Azure:~$ kubectl get nodes
+NAME                                STATUS   ROLES   AGE   VERSION
+aks-nodepool1-41796624-vmss000000   Ready    agent   15m   v1.21.7
+aks-nodepool1-41796624-vmss000001   Ready    agent   15m   v1.21.7
+```
+
+
+## Deployment of akv2k8s controller
+
+###  
 
