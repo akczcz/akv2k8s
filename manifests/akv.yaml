@@ -1,0 +1,32 @@
+# secrets for Persistent storage
+apiVersion: spv.no/v2beta1
+kind: AzureKeyVaultSecret
+metadata:
+  name: akvs-secret-name1 # 1. name of akvs object
+  namespace: app
+spec:
+  vault:
+    name: kv-testaks # 2. name of key vault
+    object:
+      name: SECRET-NAME1 # 3. name of the akv object
+      type: secret # 4. akv object type
+  output: 
+    secret: 
+      name: akv-secret-name1 # 5. kubernetes secret name
+      dataKey: secretname1 # 6. key to store object value in kubernetes apiVersion: v1
+---
+apiVersion: spv.no/v2beta1
+kind: AzureKeyVaultSecret # 1. name of akvs object
+metadata:
+  name: akvs-secret-sql
+  namespace: app
+spec:
+  vault:
+    name: kv-testaks # 2. name of key vault
+    object:
+      name: SECRET-SQL # 3. name of the akv object
+      type: secret # 4. akv object type
+  output: 
+    secret: 
+      name: akv-sql # 5. kubernetes secret name
+      dataKey: sqlconnectionstring # 6. key to store object value in kubernetes apiVersion: v1
