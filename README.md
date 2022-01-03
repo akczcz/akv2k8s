@@ -175,5 +175,57 @@ aks-nodepool1-41796624-vmss000001   Ready    agent   15m   v1.21.7
 
 ## Deployment of akv2k8s controller
 
-###  
+### Deploy kubernetes namespace
+``` azcli
+NAMESPACE_NAME=akv2k8s
+kubectl create namespace $NAMESPACE_NAME --dry-run=client -o yaml | kubectl apply -f -
+```
+### Deploy akv2k8s controller using helm chart
+Add "spv-charts" repository
+``` azcli
+helm repo add spv-charts https://charts.spvapi.no
+```
+you should get output like this:
+```
+user@Azure:~$ helm repo add spv-charts https://charts.spvapi.no
+"spv-charts" has been added to your repositories
+```
+Update local cache
+```
+helm repo update
+```
+you should get output like this:
+```
+user@Azure:~$ helm repo update
+Hang tight while we grab the latest from your chart repositories...
+...Successfully got an update from the "spv-charts" chart repository
+Update Complete. ⎈Happy Helming!⎈
+```
+Run "helm upgrade" with parameters
+```
+helm upgrade -i \
+    akv2k8s \
+    spv-charts/akv2k8s \
+    --namespace $NAMESPACE_NAME
+```
+you should get output like this:
+```
+user@Azure:~$ helm upgrade -i \
+>     akv2k8s \
+>     spv-charts/akv2k8s \
+>     --namespace $NAMESPACE_NAME
+Release "akv2k8s" does not exist. Installing it now.
+W0103 11:43:23.082623     167 warnings.go:67] policy/v1beta1 PodDisruptionBudget is deprecated in v1.21+, unavailable in v1.25+; use policy/v1 PodDisruptionBudget
+W0103 11:43:23.563168     167 warnings.go:67] policy/v1beta1 PodDisruptionBudget is deprecated in v1.21+, unavailable in v1.25+; use policy/v1 PodDisruptionBudget
+NAME: akv2k8s
+LAST DEPLOYED: Mon Jan  3 11:43:20 2022
+NAMESPACE: akv2k8s
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+NOTES:
+Congratulations! You've successfully installed Azure Key Vault to Kubernetes.
+For more information see the documentation at https://akv2k8s.io.
+```
+### Deploy test resources
 
