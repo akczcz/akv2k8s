@@ -166,7 +166,7 @@ kubectl get nodes
 ```
 You should obtain result similar to:
 ``` 
-user@Azure:~$ kubectl get nodes
+kolarik@Azure:~$ kubectl get nodes
 NAME                                STATUS   ROLES   AGE   VERSION
 aks-nodepool1-41796624-vmss000000   Ready    agent   15m   v1.21.7
 aks-nodepool1-41796624-vmss000001   Ready    agent   15m   v1.21.7
@@ -187,7 +187,7 @@ helm repo add spv-charts https://charts.spvapi.no
 ```
 you should get output like this:
 ```
-user@Azure:~$ helm repo add spv-charts https://charts.spvapi.no
+kolarik@Azure:~$ helm repo add spv-charts https://charts.spvapi.no
 "spv-charts" has been added to your repositories
 ```
 Update local cache
@@ -196,7 +196,7 @@ helm repo update
 ```
 you should get output like this:
 ```
-user@Azure:~$ helm repo update
+kolarik@Azure:~$ helm repo update
 Hang tight while we grab the latest from your chart repositories...
 ...Successfully got an update from the "spv-charts" chart repository
 Update Complete. ⎈Happy Helming!⎈
@@ -210,7 +210,7 @@ helm upgrade -i \
 ```
 you should get output like this:
 ```
-user@Azure:~$ helm upgrade -i \
+kolarik@Azure:~$ helm upgrade -i \
 >     akv2k8s \
 >     spv-charts/akv2k8s \
 >     --namespace $NAMESPACE_NAME
@@ -234,7 +234,7 @@ Now you can see, that there are is new type of API resources, try to run:
 kubectl -n akv2k8s api-resources
 ```
 and you will see in your output also akvs object type:
-![image](img/akv-API.PNG)
+![image](/img/akv-API.PNG)
 
 ### Deploy test resources into Azure KeyVault
 We will deploy test secrets into 
@@ -256,7 +256,7 @@ az keyvault secret set \
 ```
 you should get output like this:
 ```
-user@Azure:~$ az keyvault secret set \
+kolarik@Azure:~$ az keyvault secret set \
 >     --vault-name $KV_NAME \
 >     --name $SECRET_SQL \
 >     --value $SECRET_SQL_VALUE
@@ -284,7 +284,7 @@ I let whole id in the output to let you see whole id containing name of the secr
 
 You can list created secrets:
 ```
-user@Azure:~$ az keyvault secret list --vault-name $KV_NAME -o table
+kolarik@Azure:~$ az keyvault secret list --vault-name $KV_NAME -o table
 Name                 Id                                                              ContentType    Enabled    Expires
 -------------------  --------------------------------------------------------------  -------------  ---------  ---------
 secretname1          https://kv-testaks.vault.azure.net/secrets/secretname1                         True
@@ -300,7 +300,7 @@ kubectl create namespace $NAMESPACE_NAME_APP --dry-run=client -o yaml | kubectl 
 ```
 you should get output like this:
 ```
-user@Azure:~$ kubectl create namespace $NAMESPACE_NAME_APP --dry-run=client -o yaml | kubectl apply -f -
+kolarik@Azure:~$ kubectl create namespace $NAMESPACE_NAME_APP --dry-run=client -o yaml | kubectl apply -f -
 namespace/app created
 ```
 Now lets look at the file /manifests/akv.yaml, there are prepared 2 objects in declarative way.
@@ -347,7 +347,7 @@ spec:
 
 ```
 Then finaly save the manifest file:
-![image](img/akv-yaml.PNG)
+![image](/img/akv-yaml.PNG)
 
 Now let's deploy such manifests inside kubernetes:
 ``` azcli
@@ -355,7 +355,7 @@ kubectl apply -f ~/manifests/akv.yaml
 ```
 you should get output like this:
 ```
-user@Azure:~/manifests$ kubectl apply -f ~/manifests/akv.yaml
+kolarik@Azure:~/manifests$ kubectl apply -f ~/manifests/akv.yaml
 azurekeyvaultsecret.spv.no/akvs-secret-name1 created
 azurekeyvaultsecret.spv.no/akvs-secret-sql created
 ```
