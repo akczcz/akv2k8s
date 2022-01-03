@@ -3,8 +3,9 @@ Demo implementation of akv2k8s in AKS
 
 # Prerequisities
 You need such prerequisities:
-- Azure Subscription
+- Azure Subscription (RBAC assignemnt of owner resource group you will be creating)
 - Laptop with CLI (Windows with Powershell, Linux, Mac, whatever) or use Azure Cloud shell, if you need install Azure CLI use https://docs.microsoft.com/en-us/cli/azure/install-azure-cli
+- Azure CLI must have at least version "2.31.0", use "az upgrade" command to upgrade to latest version, it is recommended to use extention "aks-preview" with minal version "0.5.49"
 
 Let's use Azure CLI for now.
 
@@ -19,23 +20,13 @@ az group create \
     --resource-group $GROUP_NAME
 ```
 
-Create resource group in WE
-``` azcli
-GROUP_NAME_WE=rg-aks-test-we
-LOCATION_WE=westeurope
-az group create \
-    --location $LOCATION_WE \
-    --resource-group $GROUP_NAME_WE
-```
-
-
 ## Deployment of ACR
 
 Deploy Azure Container Registry (ACR).
 The name of ACR must be globally unique, so exchange the name with your own
 ``` azcli
 # Exchange the name aktestaksacr with your value!
-ACR_NAME=acr-aktestaks
+ACR_NAME=acraktestaks
 az acr create \
     --resource-group $GROUP_NAME \
     --name $ACR_NAME \
@@ -78,7 +69,7 @@ UAMI_KUBELET_ID=$(az identity show \
 # Deploy Azure KeyVault (AKV) with integration to Azure RBAC
 Create Azure KeyVault instance
 ``` azcli
-KV_NAME=kv-aktestaks
+KV_NAME=kv-testaks
 az keyvault create \
     --location $LOCATION \
     --resource-group $GROUP_NAME \
@@ -127,13 +118,32 @@ az role assignment create \
     --scope $KV_ID
 ```
 
+## Deployment of additional RBAC assignmnet
+
+Map need access rights for managed identities, AKS cluster's User Assigned Managed Identity has to have access rights to AKS's clusters Kubelet User Assigned Managed Identity.
+Export AKS cluster's User Assigned Managed Identity principalId as environment variable
+``` azcli
+UAMI_ID_PRINCIPALID=$(az identity show \
+    --resource-group $GROUP_NAME \
+    --query "principalId" \
+    --name $UAMI_NAME \
+    -o tsv)
+```
+Create needed role assignment
+``` azcli
+az role assignment create \
+    --assignee $UAMI_ID_PRINCIPALID \
+    --role "Owner" \
+    --scope $UAMI_KUBELET_ID
+```
+
 ## Deployment of AKS
 
 Deploy Azure Kubernetes Services (AKS) with deployment options connected to resources created with previous steps
 ``` azcli
 AKS_NAME=aks-aktest
 az aks create \
-    --resource-group $GROUP_NAME_WE \
+    --resource-group $GROUP_NAME \
     --attach-acr $ACR_NAME \
     --enable-managed-identity \
     --assign-identity $UAMI_ID \
