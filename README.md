@@ -94,6 +94,17 @@ UAMI_KUBELET_PRINCIPALID=$(az identity show \
     -o tsv)
 ```
 
+delete bellow:
+``` azcli
+UAMI_PRINCIPALID=$(az identity show \
+    --resource-group $GROUP_NAME \
+    --query "principalId" \
+    --name $UAMI_NAME \
+    -o tsv)
+```
+
+
+
 And add accesss rights for Secrets in Azure KeyVault.
 Create such role assignment for Managed Identity, which will AKS use. 
 Add built in role Azure Key Vault Secret user "https://docs.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#key-vault-secrets-user"
@@ -104,6 +115,9 @@ az role assignment create \
     --role "Key Vault Secrets User" \
     --scope $KV_ID
 ```
+
+
+
 It is good idea, to also add RBAC of role Azure Key Vault Secret Officer to any object ID of user/person/identity, which will be responsible for secret managing in Azure Key.
 Now let's export environment variable of objectId actual signed in user:
 ``` azcli
@@ -236,6 +250,35 @@ kubectl -n akv2k8s api-resources
 and you will see in your output also akvs object type:
 ![image](/img/akv-API.PNG)
 
+Let's see what type of object does deployment did:
+```
+kolarik@Azure:~/manifests$ kubectl -n akv2k8s get all
+```
+You should get output similar to:
+```
+kolarik@Azure:~/manifests$ kubectl -n akv2k8s get all
+NAME                                       READY   STATUS    RESTARTS   AGE
+pod/akv2k8s-controller-d4ff9564c-qc5vk     1/1     Running   0          109m
+pod/akv2k8s-envinjector-69f4d6bcb9-2ltcj   1/1     Running   0          109m
+pod/akv2k8s-envinjector-69f4d6bcb9-mpp4f   1/1     Running   0          109m
+
+NAME                          TYPE        CLUSTER-IP    EXTERNAL-IP   PORT(S)                   AGE
+service/akv2k8s-controller    ClusterIP   10.0.92.173   <none>        9000/TCP                  109m
+service/akv2k8s-envinjector   ClusterIP   10.0.80.235   <none>        443/TCP,80/TCP,9443/TCP   109m
+
+NAME                                  READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/akv2k8s-controller    1/1     1            1           109m
+deployment.apps/akv2k8s-envinjector   2/2     2            2           109m
+
+NAME                                             DESIRED   CURRENT   READY   AGE
+replicaset.apps/akv2k8s-controller-d4ff9564c     1         1         1       109m
+replicaset.apps/akv2k8s-envinjector-69f4d6bcb9   2         2         2       109m
+```
+Look at the controllers log:
+```
+kubectl -n akv2k8s logs akv2k8s-controller-d4ff9564c-qc5vk
+```
+
 ### Deploy test resources into Azure KeyVault
 We will deploy test secrets into 
 ``` azcli
@@ -359,5 +402,60 @@ kolarik@Azure:~/manifests$ kubectl apply -f ~/manifests/akv.yaml
 azurekeyvaultsecret.spv.no/akvs-secret-name1 created
 azurekeyvaultsecret.spv.no/akvs-secret-sql created
 ```
+
+If there is some trouble, you will not see created secrets in synced state and there are no new secrets in namespace excluding the default one:
+```
+kolarik@Azure:~/manifests$ kubectl -n app get akvs
+NAME                VAULT        VAULT OBJECT   SECRET NAME   SYNCHED   AGE
+akvs-secret-name1   kv-testaks   SECRET-NAME1                           20m
+akvs-secret-sql     kv-testaks   SECRET-SQL                             20m
+kolarik@Azure:~/manifests$ kubectl -n app get secrets
+NAME                  TYPE                                  DATA   AGE
+default-token-4fjp5   kubernetes.io/service-account-token   3      38m
+```
+
+If you do everything correctly you can see secrets in synced state:
+
+```
+kubectl -n app get akvs
+```
+and you will see kubernetes secrets:
+```
+kolarik@Azure:~$ kubectl -n app get akvs
+NAME                VAULT        VAULT OBJECT          SECRET NAME        SYNCHED   AGE
+akvs-secret-name1   kv-testaks   secretname1           akv-secret-name1   5s        5m44s
+akvs-secret-sql     kv-testaks   sqlconnectionstring   akv-sql            5s        5m44s
+```
+try to look, whether secrets have been created
+```
+kubectl -n app get secret
+```
+you should output similar to:
+```
+kolarik@Azure:~$ kubectl -n app get secret
+NAME                  TYPE                                  DATA   AGE
+akv-secret-name1      Opaque                                1      96s
+akv-sql               Opaque                                1      96s
+default-token-4fjp5   kubernetes.io/service-account-token   3      72m
+```
+let's try to describe secret to see, whether there is some content:
+```
+kubectl -n app describe secret akv-secret-name1
+```
+You should see output similar to:
+```
+kolarik@Azure:~$ kubectl -n app describe secret akv-secret-name1
+Name:         akv-secret-name1
+Namespace:    app
+Labels:       <none>
+Annotations:  <none>
+
+Type:  Opaque
+
+Data
+====
+secretname1:  17 bytes
+```
+
 ### Deploy test application and reference secrets
 
