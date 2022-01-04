@@ -2,9 +2,19 @@
 # Implementation of akv2k8s in Azure Kubernetes Services (AKS)
 This is LAB implementation of project akv2k8s (see https://akv2k8s.io/ for documentation) in Azure Kuberenetes Services / AKS (see https://docs.microsoft.com/en-us/azure/aks/ for documentation).  
 LAB uses imperative way of deployment (Azure CLI commands in this case).  
-You will use probably declarative way of deployment resources in your environment, in a meaning of definition of service instance using Azure Resource Manager (ARM) templates, Bicep, or Terraform type of deployment or any other declarative infrastructure description.  
+You will use probably declarative way of deployment resources in your environment, in a meaning of definition of service instance using of Azure Resource Manager (ARM) templates, Bicep, or Terraform type of deployment or any other declarative infrastructure description.  
 Moreover, you will probably orchestrate such declarative way of deployment in your Continuous Integration/Continuous Deployment pipelines (Using Azure DevOps, or Github, or any other tools).  
-Infrastructure described bellow does not contain other security related topics, which should beared in mined and implemented accordign to security baselines and needed level of security by your project (it can be e.g. using private endpoints, private cluster deployment, encryption at rest, more advanced integration to AAD, etc.).   
+Infrastructure described bellow does not contain other security related topics, which should beared in mind and implemented according to security baselines and needed level of security by your project (it can be e.g. using private endpoints, private cluster deployment, encryption at rest, more advanced integration to AAD, etc.).   
+
+# Project's Goal
+Goal of this project is:
+- Test akv2k8s project implementation with Azure Kubernetes Services
+- Test the functionality of replication secrets between Azure KeyVault and Azure Kubernetes Services (synchronization of secrets into kubernetes secrets, which are persistently stored in etcd database)
+- Test 
+# Project's Out of scope
+- Declarative way of infrastructure deployment (which should be done as DevOps principles are part of Cloud Native architecture)
+- Using Continuous Integration/ Continuous Deployment (CI/CD) pipelines (as such is best practice to use in Cloud Native architecture)
+- Mapping of secrets by akv2k8s to application pods directelly without syncing to kubernetes secrets (as it can be another way of deployment akv2k8s project)
 
 # Prerequisities
 You need such prerequisities:
@@ -12,7 +22,7 @@ You need such prerequisities:
 - Laptop with CLI (Windows with Powershell, Linux, Mac, whatever) or use Azure Cloud shell, if you need install Azure CLI use https://docs.microsoft.com/en-us/cli/azure/install-azure-cli
 - Azure CLI must have at least version "2.31.0", use "az upgrade" command to upgrade to latest version, it is recommended to use extention "aks-preview" with minal version "0.5.49"
 
-Let's use Azure CLI for now.
+I will use Azure CLI for this LAB.
 
 ## Preparation tasks - deployment infrastructure in Azure Resource Group
 
