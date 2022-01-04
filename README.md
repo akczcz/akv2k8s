@@ -215,39 +215,39 @@ You should get output like this:
 namespace/akv2k8s created
 ```
 ### Deploy akv2k8s controller using helm chart
-Add "spv-charts" repository
+Now, we will deploy akv2k8s controller using helm chart's to our kubernetes namespace.
+Add "spv-charts" repository:
 ``` azcli
 helm repo add spv-charts https://charts.spvapi.no
 ```
+
 you should get output like this:
 ```
-kolarik@Azure:~$ helm repo add spv-charts https://charts.spvapi.no
 "spv-charts" has been added to your repositories
 ```
-Update local cache
+
+Next, update local helm repository cache:
 ```
 helm repo update
 ```
-you should get output like this:
+
+You should get output like this:
 ```
-kolarik@Azure:~$ helm repo update
 Hang tight while we grab the latest from your chart repositories...
 ...Successfully got an update from the "spv-charts" chart repository
 Update Complete. ⎈Happy Helming!⎈
 ```
-Run "helm upgrade" with parameters
+
+Next, run "helm upgrade" with parameters:
 ```
 helm upgrade -i \
     akv2k8s \
     spv-charts/akv2k8s \
     --namespace $NAMESPACE_NAME
 ```
-you should get output like this:
+
+You should get output like this:
 ```
-kolarik@Azure:~$ helm upgrade -i \
->     akv2k8s \
->     spv-charts/akv2k8s \
->     --namespace $NAMESPACE_NAME
 Release "akv2k8s" does not exist. Installing it now.
 W0103 11:43:23.082623     167 warnings.go:67] policy/v1beta1 PodDisruptionBudget is deprecated in v1.21+, unavailable in v1.25+; use policy/v1 PodDisruptionBudget
 W0103 11:43:23.563168     167 warnings.go:67] policy/v1beta1 PodDisruptionBudget is deprecated in v1.21+, unavailable in v1.25+; use policy/v1 PodDisruptionBudget
@@ -261,9 +261,10 @@ NOTES:
 Congratulations! You've successfully installed Azure Key Vault to Kubernetes.
 For more information see the documentation at https://akv2k8s.io.
 ```
-If you come to this point, you sucessfully deployed needed infrastructure including AKS and deployed controller akv2k8s inside kubernetes cluster
 
-Now you can see, that there are is new type of API resources, try to run:
+If you come to this point, you sucessfully deployed needed infrastructure, including AKS and controller akv2k8s inside kubernetes cluster.
+
+Now, you can see, that there is new type of API resources available, try to run:
 ```
 kubectl -n akv2k8s api-resources
 ```
@@ -274,9 +275,9 @@ Let's see what type of object does deployment did:
 ```
 kolarik@Azure:~/manifests$ kubectl -n akv2k8s get all
 ```
+
 You should get output similar to:
 ```
-kolarik@Azure:~/manifests$ kubectl -n akv2k8s get all
 NAME                                       READY   STATUS    RESTARTS   AGE
 pod/akv2k8s-controller-d4ff9564c-qc5vk     1/1     Running   0          109m
 pod/akv2k8s-envinjector-69f4d6bcb9-2ltcj   1/1     Running   0          109m
@@ -294,7 +295,8 @@ NAME                                             DESIRED   CURRENT   READY   AGE
 replicaset.apps/akv2k8s-controller-d4ff9564c     1         1         1       109m
 replicaset.apps/akv2k8s-envinjector-69f4d6bcb9   2         2         2       109m
 ```
-Look at the controllers log:
+
+You can look at the akv2k8s's controller logs by typing command bellow, exchange the name of pod akv2k8s-controller-d4ff9564c-qc5vk with your real name of controller pod:
 ```
 kubectl -n akv2k8s logs akv2k8s-controller-d4ff9564c-qc5vk
 ```
