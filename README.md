@@ -623,7 +623,7 @@ spec:
       containers:
       - image: nginx
         name: nginx
-      - env: # added new line
+        env: # added new line
         - name: SECRET_NAME1 # added new line
           valueFrom: # added new line
             configMapKeyRef: # added new line
@@ -642,5 +642,15 @@ And then, apply such changes, so run again:
 ```
 cd ~/manifests
 kubectl apply -f  nginx.yaml
+```
+
+If you did not create any error you should see output similar to:
+```
+deployment.apps/nginx configured
+```
+
+Look at the new container created:
+```
+kubectl -n app get deploy,pod,rs,service
 ```
 
