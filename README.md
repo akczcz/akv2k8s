@@ -29,7 +29,7 @@ You need such prerequisities:
 
 I will use Azure CLI for this LAB.
 
-## Preparation tasks - deployment infrastructure in Azure Resource Group
+## Preparation tasks - infrastructure deployment in Azure Resource Group
 
 Create resource group for deployment any other resources in your subscription, change group name in GROUP_NAME variable and change location in LOCATION variable definition (see available regions at: https://azure.microsoft.com/en-us/global-infrastructure/geographies/#overview):
 ``` azcli
@@ -40,12 +40,12 @@ az group create \
     --resource-group $GROUP_NAME
 ```
 
-### Deployment of ACR
+### Deployment of Azure Container Registry (ACR)
 
 Deploy Azure Container Registry (ACR).
-The name of ACR must be globally unique, so exchange the name with your own
+The name of ACR must be globally unique, so exchange the name of ACR defined in ACR_NAME variable with your own value:
 ``` azcli
-# Exchange the name aktestaksacr with your value!
+# Exchange the name acraktestaks with your value, it must be globally unique!
 ACR_NAME=acraktestaks
 az acr create \
     --resource-group $GROUP_NAME \
