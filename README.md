@@ -314,6 +314,7 @@ I0104 09:44:45.336506       1 controller.go:199] "starting azure key vault delet
 I0104 09:44:45.336516       1 controller.go:202] "starting azure key vault queue"
 I0104 09:44:45.336525       1 controller.go:205] "started workers"
 ```
+!!! Remember how to see controller logs, you will mostly propably use such logs in case of any troubleshooting, you will see syncing information with secrets in this logs, including possible troubles !!!
 
 ### Deploy test resources into Azure KeyVault
 We will deploy test secrets into 
