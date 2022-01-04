@@ -301,6 +301,20 @@ You can look at the akv2k8s's controller logs by typing command bellow, exchange
 kubectl -n akv2k8s logs akv2k8s-controller-d4ff9564c-qc5vk
 ```
 
+You should see output similar to:
+```
+I0104 09:44:44.261444       1 main.go:96] "log settings" format="text" level="2"
+I0104 09:44:44.261502       1 version.go:31] "version info" version="1.3.0" commit="a375982" buildDate="2021-08-06T06:52:07Z" component="controller"
+W0104 09:44:44.261605       1 client_config.go:615] Neither --kubeconfig nor --master was specified.  Using the inClusterConfig.  This might not work.
+I0104 09:44:44.263070       1 main.go:161] "Creating event broadcaster"
+I0104 09:44:44.836258       1 controller.go:167] "setting up event handlers"
+I0104 09:44:44.836291       1 controller.go:178] "starting azurekeyvaultsecret controller"
+I0104 09:44:45.336466       1 controller.go:196] "starting azure key vault secret queue"
+I0104 09:44:45.336506       1 controller.go:199] "starting azure key vault deleted secret queue"
+I0104 09:44:45.336516       1 controller.go:202] "starting azure key vault queue"
+I0104 09:44:45.336525       1 controller.go:205] "started workers"
+```
+
 ### Deploy test resources into Azure KeyVault
 We will deploy test secrets into 
 ``` azcli
