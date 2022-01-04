@@ -670,3 +670,24 @@ Let's finally look at the new pod environment variable, do not forget to exchang
 # change pod name nginx-67cfb48f7c-lwwnj with your real one
 kubectl -n app exec nginx-67cfb48f7c-lwwnj it -- printenv
 ```
+
+As final output you should receive your environment values from Azure KeyVault resp. kubernetes secrets:
+```
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+HOSTNAME=nginx-67cfb48f7c-lwwnj
+NGINX_VERSION=1.21.5
+NJS_VERSION=0.7.1
+PKG_RELEASE=1~bullseye
+SQL_CONNECTION_STRING=TopSecretConnectionString
+SECRET_NAME1=TopSecretPassword
+KUBERNETES_SERVICE_PORT=443
+KUBERNETES_SERVICE_PORT_HTTPS=443
+KUBERNETES_PORT=tcp://10.0.0.1:443
+KUBERNETES_PORT_443_TCP=tcp://10.0.0.1:443
+KUBERNETES_PORT_443_TCP_PROTO=tcp
+KUBERNETES_PORT_443_TCP_PORT=443
+KUBERNETES_PORT_443_TCP_ADDR=10.0.0.1
+KUBERNETES_SERVICE_HOST=10.0.0.1
+HOME=/root
+```
+![image](/img/printenv.PNG)
