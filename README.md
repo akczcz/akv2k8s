@@ -89,7 +89,7 @@ UAMI_KUBELET_ID=$(az identity show \
 Create Azure KeyVault instance, change KV_NAME variable value with your value, it must be globally unique:
 ``` azcli
 # change the name kv-testaks with your value, it must be globally unique!
-KV_NAME=kv-testaks
+KV_NAME=kv-tstaks
 az keyvault create \
     --location $LOCATION \
     --resource-group $GROUP_NAME \
