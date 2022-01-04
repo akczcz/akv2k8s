@@ -514,6 +514,6 @@ Now let's try to deploy easy application and reference such secrets from an appl
 ```
 # Go to the manigests folder if you did not so far
 cd ~/manifests
-kubectl create deployment nginx --image=nginx --dry-run=client -o yaml > nginx.yaml
+kubectl create deployment nginx --image=nginx --dry-run=client --namespace=app -o yaml > nginx.yaml
 ```
 
