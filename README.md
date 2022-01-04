@@ -4,7 +4,7 @@ This is LAB implementation of project akv2k8s (see https://akv2k8s.io/ for docum
 LAB uses imperative way of deployment (Azure CLI commands in this case).  
 You will use probably declarative way of deployment resources in your environment, in a meaning of definition of service instance using of Azure Resource Manager (ARM) templates, Bicep, or Terraform type of deployment or any other declarative infrastructure description.  
 Moreover, you will probably orchestrate such declarative way of deployment in your Continuous Integration/Continuous Deployment pipelines (Using Azure DevOps, or Github, or any other tools).  
-Infrastructure described bellow does not contain other security related topics, which should beared in mind and implemented according to security baselines and needed level of security by your project (it can be e.g. using private endpoints, private cluster deployment, encryption at rest, more advanced integration to AAD, etc.).   
+Infrastructure described bellow does not contain other security related topics, which should be beared in mind and implemented according to security baselines and needed level of security by your project (it can be e.g. using private endpoints, private cluster deployment, encryption at rest, more advanced integration to AAD, etc.).   
 You should also check the source of akv2k8s project on its github pages (https://github.com/SparebankenVest/akv2k8s-website/blob/master/source/content/index.mdx) and thing about all aspects of this OpenSource project before using it in your deployment.
 
 # Project's Goal
@@ -23,7 +23,7 @@ Goal of this project is:
 
 # Prerequisities
 You need such prerequisities:
-- Azure Subscription (RBAC assignemnt of owner resource group you will be creating)
+- Azure Subscription (RBAC assignment of owner resource group you will be creating)
 - Laptop with CLI (Windows with Powershell, Linux, Mac, whatever) or use Azure Cloud shell, if you need install Azure CLI use https://docs.microsoft.com/en-us/cli/azure/install-azure-cli
 - Azure CLI must have at least version "2.31.0", use "az upgrade" command to upgrade to latest version, it is recommended to use extention "aks-preview" with minal version "0.5.49"
 
@@ -31,7 +31,7 @@ I will use Azure CLI for this LAB.
 
 ## Preparation tasks - deployment infrastructure in Azure Resource Group
 
-Create resource group
+Create resource group for deployment any other resources in your subscription, change group name in GROUP_NAME variable and change location in LOCATION variable definition (see available regions at: https://azure.microsoft.com/en-us/global-infrastructure/geographies/#overview):
 ``` azcli
 GROUP_NAME=rg-aks-test
 LOCATION=northeurope
