@@ -273,7 +273,7 @@ and you will see in your output also akvs object type:
 
 Let's see what type of object does deployment did:
 ```
-kolarik@Azure:~/manifests$ kubectl -n akv2k8s get all
+kubectl -n akv2k8s get all
 ```
 
 You should get output similar to:
