@@ -316,10 +316,9 @@ I0104 09:44:45.336525       1 controller.go:205] "started workers"
 ```
 !!! Remember how to see controller logs, you will mostly propably use such logs in case of any troubleshooting, you will see syncing information with secrets in this logs, including possible troubles !!!
 
-### Deploy test resources into Azure KeyVault
-We will deploy test secrets into 
+### Deploy test secrets into Azure KeyVault
+We will deploy test secrets into Azure KeyVault, you can change the variables and its values any way, but then you should update scripts bellow and also mapping kubernetes objects defined later in this LAB: 
 ``` azcli
-KV_NAME=kv-testaks
 SECRET_NAME1="secretname1"
 SECRET_VALUE1="TopSecretPassword"
 az keyvault secret set \
@@ -334,12 +333,9 @@ az keyvault secret set \
     --name $SECRET_SQL \
     --value $SECRET_SQL_VALUE
 ```
-you should get output like this:
+
+You should get output's like this (for each secret definition):
 ```
-kolarik@Azure:~$ az keyvault secret set \
->     --vault-name $KV_NAME \
->     --name $SECRET_SQL \
->     --value $SECRET_SQL_VALUE
 {
   "attributes": {
     "created": "2022-01-03T11:57:31+00:00",
@@ -360,17 +356,21 @@ kolarik@Azure:~$ az keyvault secret set \
   "value": "TopSecretConnectionString"
 }
 ```
-I let whole id in the output to let you see whole id containing name of the secret (/sqlconnectionstring/) and its version at the end (/81d0db1307044c5a83da9fbeb2d115cf).
+I let whole id in the output, to let you see whole id containing name of the secret (/sqlconnectionstring/) and its version at the end (/81d0db1307044c5a83da9fbeb2d115cf), version will be changing in future editing of secret and akv2k8s controller in kubernetes will be syncing such new versions inside kubernetes secrets.
 
-You can list created secrets:
+You can list created secrets by typing:
 ```
-kolarik@Azure:~$ az keyvault secret list --vault-name $KV_NAME -o table
+az keyvault secret list --vault-name $KV_NAME -o table
+```
+
+You should get output similar to:
+```
 Name                 Id                                                              ContentType    Enabled    Expires
 -------------------  --------------------------------------------------------------  -------------  ---------  ---------
 secretname1          https://kv-testaks.vault.azure.net/secrets/secretname1                         True
 sqlconnectionstring  https://kv-testaks.vault.azure.net/secrets/sqlconnectionstring                 True
 ```
-or in GUI of Azure KeyVault instance.
+or you can list secrets in GUI of Azure KeyVault instance.
 
 ### Deploy kuberentes mapping objects
 Let's create namespace for application, we will put our synchronized secrets to that namespace, because, we will reference them to the application in the same namespace
