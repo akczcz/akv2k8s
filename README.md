@@ -45,7 +45,7 @@ az group create \
 Deploy Azure Container Registry (ACR).
 The name of ACR must be globally unique, so exchange the name of ACR defined in ACR_NAME variable with your own value:
 ``` azcli
-# Exchange the name acraktestaks with your value, it must be globally unique!
+# change the name acraktestaks with your value, it must be globally unique!
 ACR_NAME=acraktestaks
 az acr create \
     --resource-group $GROUP_NAME \
@@ -53,14 +53,15 @@ az acr create \
     --sku Basic
 ```
 ### Deployment of User Assigned Managed Identities for AKS
-Deploy Azure User Assigned Managed Identity
+
+Deploy Azure User Assigned Managed Identity of AKS cluster, change UAMI_NAME variable with your value:  
 ``` azcli
 UAMI_NAME=uami-aks
 az identity create \
     --resource-group $GROUP_NAME \
     --name $UAMI_NAME
 ```
-Export identity id value into variable
+Export managed identity's id value into new variable UAMI_ID (will be referenced later):
 ``` azcli
 UAMI_ID=$(az identity show \
     --resource-group $GROUP_NAME \
@@ -68,14 +69,14 @@ UAMI_ID=$(az identity show \
     --name $UAMI_NAME \
     -o tsv)
 ```
-Deploy Azure User Assigned Managed Identity for Kubelet
+Deploy Azure User Assigned Managed Identity of AKS cluster Kubelet, change UAMI_KUBELET_NAME variable with your value:
 ``` azcli
 UAMI_KUBELET_NAME=uami-aks-kubelet
 az identity create \
     --resource-group $GROUP_NAME \
     --name $UAMI_KUBELET_NAME
 ```
-Export kubelet identity id value into variable
+Export kubelet's managed identity id value into variable UAMI_KUBELET_ID (will be referenced later):
 ``` azcli
 UAMI_KUBELET_ID=$(az identity show \
     --resource-group $GROUP_NAME \
@@ -85,8 +86,9 @@ UAMI_KUBELET_ID=$(az identity show \
 ```
 
 ### Deploy Azure KeyVault (AKV) with integration to Azure RBAC
-Create Azure KeyVault instance
+Create Azure KeyVault instance, change KV_NAME variable value with your value, it must be globally unique:
 ``` azcli
+# change the name kv-testaks with your value, it must be globally unique!
 KV_NAME=kv-testaks
 az keyvault create \
     --location $LOCATION \
@@ -94,7 +96,8 @@ az keyvault create \
     --enable-rbac-authorization true \
     --name $KV_NAME
 ```
-Export KeyVault id value into variable
+
+Export KeyVault's id value into variable KV_ID:
 ``` azcli
 KV_ID=$(az keyvault show \
     --resource-group $GROUP_NAME \
@@ -102,7 +105,8 @@ KV_ID=$(az keyvault show \
     --name $KV_NAME \
     -o tsv)
 ```
-Export principalId of User Assigned Managed Identity of Kubelet (it will be accessing Azure KeyVault for secrets):
+
+Export of Kubelet's User Assigned Managed Identity principalId into variable UAMI_KUBELET_PRINCIPALID (it will be accessing Azure KeyVault for secrets):
 ``` azcli
 UAMI_KUBELET_PRINCIPALID=$(az identity show \
     --resource-group $GROUP_NAME \
@@ -113,8 +117,7 @@ UAMI_KUBELET_PRINCIPALID=$(az identity show \
 
 And add accesss rights for Secrets in Azure KeyVault.
 Create such role assignment for Managed Identity, which will AKS use. 
-Add built in role Azure Key Vault Secret user "https://docs.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#key-vault-secrets-user"
-Vault
+Add built in role Azure Key Vault Secret user "https://docs.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#key-vault-secrets-user":
 ``` azcli
 az role assignment create \
     --assignee $UAMI_KUBELET_PRINCIPALID \
@@ -122,16 +125,15 @@ az role assignment create \
     --scope $KV_ID
 ```
 
-
-
-It is good idea, to also add RBAC of role Azure Key Vault Secret Officer to any object ID of user/person/identity, which will be responsible for secret managing in Azure Key.
-Now let's export environment variable of objectId actual signed in user:
+It is also good idea, to add RBAC of role Azure Key Vault Secret Officer to any object ID of user/person/identity, which will be responsible for secret management in Azure KeyVault.
+Let's export environment variable objectId actually signed user into variable USER_NAME_OBJECTID:
 ``` azcli
 USER_NAME_OBJECTID=$(az ad signed-in-user show \
     --query "objectId" \
     -o tsv)
 ```
-Add built in role assignment of Azure Key Vault Secret Officer https://docs.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#key-vault-secrets-officer to user identity
+
+Add built-in role assignment of Azure Key Vault Secret Officer https://docs.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#key-vault-secrets-officer to user identity:
 ``` azcli
 az role assignment create \
     --assignee $USER_NAME_OBJECTID \
