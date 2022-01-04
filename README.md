@@ -1,3 +1,4 @@
+![image](/img/thumbnail.jfif)
 # Implementation of akv2k8s in Azure Kubernetes Services (AKS)
 This is LAB implementation of akv2k8s in AKS.
 LAB uses imperative way of deployment (Azure CLI commands in this case).
