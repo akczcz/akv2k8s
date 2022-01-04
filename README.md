@@ -1,9 +1,10 @@
 ![image](/img/thumbnail.jfif)
 # Implementation of akv2k8s in Azure Kubernetes Services (AKS)
-This is LAB implementation of akv2k8s in AKS.
-LAB uses imperative way of deployment (Azure CLI commands in this case).
-You will use probably declarative way of deployment resources in your environment, in a meaning of definition of service instance using Azure Resource Manager (ARM) templates, Bicep, or Terraform type of deployment.
-Moreover, you will probably orchestrate such declarative way of deployment in your Continuous Integration/Continuous Deployment pipelines (Using Azure DevOps, or Github, or any other tools).
+This is LAB implementation of akv2k8s in AKS.  
+LAB uses imperative way of deployment (Azure CLI commands in this case).  
+You will use probably declarative way of deployment resources in your environment, in a meaning of definition of service instance using Azure Resource Manager (ARM) templates, Bicep, or Terraform type of deployment.  
+Moreover, you will probably orchestrate such declarative way of deployment in your Continuous Integration/Continuous Deployment pipelines (Using Azure DevOps, or Github, or any other tools).  
+
 
 # Prerequisities
 You need such prerequisities:
