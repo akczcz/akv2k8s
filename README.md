@@ -622,12 +622,12 @@ spec:
       - env: # added new line
         - name: SECRET_NAME1 # added new line
           valueFrom: # added new line
-            configMapKeyRef: # added new line
+            secretKeyRef: # added new line
               name: akv-secret-name1 # added new line
               key: secretname1 # added new line
         - name: SQL_CONNECTION_STRING # added new line
           valueFrom: # added new line
-            configMapKeyRef: # added new line
+            secretKeyRef: # added new line
               name: akv-sql # added new line
               key: sqlconnectionstring # added new line
         image: nginx
@@ -651,3 +651,22 @@ Look at the new container created:
 kubectl -n app get deploy,pod,rs,service
 ```
 
+Now you should receive out with new replicaset and new pod:
+```
+NAME                    READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/nginx   1/1     1            1           41m
+
+NAME                         READY   STATUS    RESTARTS   AGE
+pod/nginx-67cfb48f7c-lwwnj   1/1     Running   0          99s
+
+NAME                               DESIRED   CURRENT   READY   AGE
+replicaset.apps/nginx-55ddf89fb7   0         0         0       18m
+replicaset.apps/nginx-6799fc88d8   0         0         0       41m
+replicaset.apps/nginx-67cfb48f7c   1         1         1       99s
+```
+
+Let's finally look at the new pod environment variable, do not forget to exchange the name of pod in cmdlet bellow with your new one:
+```
+# change pod name nginx-67cfb48f7c-lwwnj with your real one
+kubectl -n app exec nginx-67cfb48f7c-lwwnj it -- printenv
+```
