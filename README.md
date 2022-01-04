@@ -418,7 +418,7 @@ spec:
   vault:
     name: kv-tstaks # 2. name of key vault, change IT with your value!
     object:
-      name: SECRET-NAME1 # 3. name of the akv object
+      name: secretname1 # 3. name of the akv object
       type: secret # 4. akv object type
   output: 
     secret: 
@@ -434,7 +434,7 @@ spec:
   vault:
     name: kv-tstaks # 2. name of key vault, change IT with your value!
     object:
-      name: SECRET-SQL # 3. name of the akv object
+      name: sqlconnectionstring # 3. name of the akv object
       type: secret # 4. akv object type
   output: 
     secret: 
