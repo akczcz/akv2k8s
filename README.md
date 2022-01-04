@@ -209,6 +209,11 @@ Deploy kubernetes namespace:
 NAMESPACE_NAME=akv2k8s
 kubectl create namespace $NAMESPACE_NAME --dry-run=client -o yaml | kubectl apply -f -
 ```
+
+You should get output like this:
+```
+namespace/akv2k8s created
+```
 ### Deploy akv2k8s controller using helm chart
 Add "spv-charts" repository
 ``` azcli
