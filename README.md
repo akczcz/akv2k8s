@@ -692,7 +692,8 @@ HOME=/root
 ```
 ![image](/img/printenv.PNG)
 
-If you come to this point, you reached our goal, you synced Azure KeyVault secrets to kubernetes secrets and mapped them to application.    
+If you come to this point, you reached our goal, you synced Azure KeyVault secrets to kubernetes secrets and mapped them to application.  
+  
 Congratulations !!!  
 
 Now you can delete your resource group to clean resources in your LAB:
