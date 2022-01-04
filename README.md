@@ -338,15 +338,15 @@ You should get output's like this (for each secret definition):
 ```
 {
   "attributes": {
-    "created": "2022-01-03T11:57:31+00:00",
+    "created": "2022-01-04T09:58:02+00:00",
     "enabled": true,
     "expires": null,
     "notBefore": null,
     "recoveryLevel": "Recoverable+Purgeable",
-    "updated": "2022-01-03T11:57:31+00:00"
+    "updated": "2022-01-04T09:58:02+00:00"
   },
   "contentType": null,
-  "id": "https://kv-testaks.vault.azure.net/secrets/sqlconnectionstring/81d0db1307044c5a83da9fbeb2d115cf",
+  "id": "https://kv-tstaks.vault.azure.net/secrets/sqlconnectionstring/80a419159fb94611a91f616295bd33bf",
   "kid": null,
   "managed": null,
   "name": "sqlconnectionstring",
@@ -356,7 +356,7 @@ You should get output's like this (for each secret definition):
   "value": "TopSecretConnectionString"
 }
 ```
-I let whole id in the output, to let you see whole id containing name of the secret (/sqlconnectionstring/) and its version at the end (/81d0db1307044c5a83da9fbeb2d115cf), version will be changing in future editing of secret and akv2k8s controller in kubernetes will be syncing such new versions inside kubernetes secrets.
+I let whole id in the output, to let you see whole id containing name of the secret (/sqlconnectionstring/) and its version at the end (/80a419159fb94611a91f616295bd33bf), version will be changing in future editing of secret and akv2k8s controller in kubernetes will be syncing such new versions inside kubernetes secrets.
 
 You can list created secrets by typing:
 ```
@@ -365,25 +365,26 @@ az keyvault secret list --vault-name $KV_NAME -o table
 
 You should get output similar to:
 ```
-Name                 Id                                                              ContentType    Enabled    Expires
--------------------  --------------------------------------------------------------  -------------  ---------  ---------
-secretname1          https://kv-testaks.vault.azure.net/secrets/secretname1                         True
-sqlconnectionstring  https://kv-testaks.vault.azure.net/secrets/sqlconnectionstring                 True
+Name                 Id                                                             ContentType    Enabled    Expires
+-------------------  -------------------------------------------------------------  -------------  ---------  ---------
+secretname1          https://kv-tstaks.vault.azure.net/secrets/secretname1                         True
+sqlconnectionstring  https://kv-tstaks.vault.azure.net/secrets/sqlconnectionstring                 True
 ```
 or you can list secrets in GUI of Azure KeyVault instance.
 
-### Deploy kuberentes mapping objects
-Let's create namespace for application, we will put our synchronized secrets to that namespace, because, we will reference them to the application in the same namespace
+### Deploy kubernetes mapping objects (akvs)
+Let's create namespace for application, we will put our synchronized secrets to that namespace, because, we will reference them to the application in the same namespace az an application:
 ``` azcli
 NAMESPACE_NAME_APP=app
 kubectl create namespace $NAMESPACE_NAME_APP --dry-run=client -o yaml | kubectl apply -f -
 ```
-you should get output like this:
+
+You should get output like this:
 ```
-kolarik@Azure:~$ kubectl create namespace $NAMESPACE_NAME_APP --dry-run=client -o yaml | kubectl apply -f -
 namespace/app created
 ```
-Now lets look at the file /manifests/akv.yaml, there are prepared 2 objects in declarative way.
+
+Now lets look at the file /manifests/akv.yaml, there are prepared 2 objects in declarative way, you can also clone this repo, to safe your time, if you want.
 ```
 DIR_NAME=manifests
 mkdir $DIR_NAME
@@ -400,7 +401,7 @@ metadata:
   namespace: app
 spec:
   vault:
-    name: kv-testaks # 2. name of key vault
+    name: kv-tstaks # 2. name of key vault, change IT with your value!
     object:
       name: SECRET-NAME1 # 3. name of the akv object
       type: secret # 4. akv object type
@@ -416,7 +417,7 @@ metadata:
   namespace: app
 spec:
   vault:
-    name: kv-testaks # 2. name of key vault
+    name: kv-tstaks # 2. name of key vault, change IT with your value!
     object:
       name: SECRET-SQL # 3. name of the akv object
       type: secret # 4. akv object type
@@ -433,52 +434,57 @@ Now let's deploy such manifests inside kubernetes:
 ``` azcli
 kubectl apply -f ~/manifests/akv.yaml
 ```
-you should get output like this:
+
+You should get output like this:
 ```
-kolarik@Azure:~/manifests$ kubectl apply -f ~/manifests/akv.yaml
 azurekeyvaultsecret.spv.no/akvs-secret-name1 created
 azurekeyvaultsecret.spv.no/akvs-secret-sql created
 ```
 
-If there is some trouble, you will not see created secrets in synced state and there are no new secrets in namespace excluding the default one:
-```
-kolarik@Azure:~/manifests$ kubectl -n app get akvs
-NAME                VAULT        VAULT OBJECT   SECRET NAME   SYNCHED   AGE
-akvs-secret-name1   kv-testaks   SECRET-NAME1                           20m
-akvs-secret-sql     kv-testaks   SECRET-SQL                             20m
-kolarik@Azure:~/manifests$ kubectl -n app get secrets
-NAME                  TYPE                                  DATA   AGE
-default-token-4fjp5   kubernetes.io/service-account-token   3      38m
-```
-
-If you do everything correctly you can see secrets in synced state:
-
+If there is some trouble, you will not see created secrets in synced state: 
 ```
 kubectl -n app get akvs
 ```
-and you will see kubernetes secrets:
+
+If there is some trouble, you will get:
 ```
-kolarik@Azure:~$ kubectl -n app get akvs
+NAME                VAULT        VAULT OBJECT   SECRET NAME   SYNCHED   AGE
+akvs-secret-name1   kv-testaks   SECRET-NAME1                           20m
+akvs-secret-sql     kv-testaks   SECRET-SQL                             20m
+```
+
+If your secrets are not synced correctly, go to the akv2k8s controller log ans see whats wrong (access rights, networking, referencing, etc).  
+If there is everything well done, you should see output similar to:
+```
 NAME                VAULT        VAULT OBJECT          SECRET NAME        SYNCHED   AGE
 akvs-secret-name1   kv-testaks   secretname1           akv-secret-name1   5s        5m44s
 akvs-secret-sql     kv-testaks   sqlconnectionstring   akv-sql            5s        5m44s
 ```
-try to look, whether secrets have been created
+
+You should also check created secrets, type:
 ```
-kubectl -n app get secret
+kubectl -n app get secrets
 ```
-you should output similar to:
+
+If there is trouble, you will se only default kubernetes secret without newly created ones:
 ```
-kolarik@Azure:~$ kubectl -n app get secret
+NAME                  TYPE                                  DATA   AGE
+default-token-4fjp5   kubernetes.io/service-account-token   3      38m
+```
+
+If your akvs objects are in synced state, you will see newly created kubernetes secrets: 
+```
 NAME                  TYPE                                  DATA   AGE
 akv-secret-name1      Opaque                                1      96s
 akv-sql               Opaque                                1      96s
 default-token-4fjp5   kubernetes.io/service-account-token   3      72m
 ```
-let's try to describe secret to see, whether there is some content:
+
+Let's try to describe secret to see, whether there is some content:
 ```
 kubectl -n app describe secret akv-secret-name1
 ```
+
 You should see output similar to:
 ```
 kolarik@Azure:~$ kubectl -n app describe secret akv-secret-name1
@@ -494,7 +500,7 @@ Data
 secretname1:  17 bytes
 ```
 
-As you may know, secrets inside kubernetes are stored in etcd database and they are not encrypted, they are encoded with base64 algorithm.
+As you may know, secrets inside kubernetes are stored in ETCD database, and they are not encrypted, they are encoded with base64 algorithm.
 So, let's try to decode data value from secret and see its value:
 ``` azcli
 kubectl -n app get secrets/akv-secret-name1 --template={{.data.secretname1}} | base64 -d
