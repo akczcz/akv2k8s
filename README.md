@@ -114,14 +114,6 @@ UAMI_KUBELET_PRINCIPALID=$(az identity show \
     --name $UAMI_KUBELET_NAME \
     -o tsv)
 ```
-``` azcli
-UAMI_PRINCIPALID=$(az identity show \
-    --resource-group $GROUP_NAME \
-    --query "principalId" \
-    --name $UAMI_NAME \
-    -o tsv)
-```
-
 
 And add accesss rights for Secrets in Azure KeyVault.
 Create such role assignment for Managed Identity, which will AKS use. 
@@ -132,13 +124,6 @@ az role assignment create \
     --role "Key Vault Secrets User" \
     --scope $KV_ID
 ```
-``` azcli
-az role assignment create \
-    --assignee $UAMI_PRINCIPALID \
-    --role "Key Vault Secrets User" \
-    --scope $KV_ID
-```
-
 
 It is also good idea, to add RBAC of role Azure Key Vault Secret Officer to any object ID of user/person/identity, which will be responsible for secret management in Azure KeyVault.
 Let's export environment variable objectId actually signed user into variable USER_NAME_OBJECTID:
