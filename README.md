@@ -5,16 +5,21 @@ LAB uses imperative way of deployment (Azure CLI commands in this case).
 You will use probably declarative way of deployment resources in your environment, in a meaning of definition of service instance using of Azure Resource Manager (ARM) templates, Bicep, or Terraform type of deployment or any other declarative infrastructure description.  
 Moreover, you will probably orchestrate such declarative way of deployment in your Continuous Integration/Continuous Deployment pipelines (Using Azure DevOps, or Github, or any other tools).  
 Infrastructure described bellow does not contain other security related topics, which should beared in mind and implemented according to security baselines and needed level of security by your project (it can be e.g. using private endpoints, private cluster deployment, encryption at rest, more advanced integration to AAD, etc.).   
+You should also check the source of akv2k8s project on its github pages (https://github.com/SparebankenVest/akv2k8s-website/blob/master/source/content/index.mdx) and thing about all aspects of this OpenSource project before using it in your deployment.
 
 # Project's Goal
 Goal of this project is:
 - Test akv2k8s project implementation with Azure Kubernetes Services
 - Test the functionality of replication secrets between Azure KeyVault and Azure Kubernetes Services (synchronization of secrets into kubernetes secrets, which are persistently stored in etcd database)
-- Test 
+- Test the functionality with providing such synced secret as pod's environment variable
+- Deployment of infastructure according to the design bellow:  
+![image](/img/akv2k8s.drawio.png)
+
+
 # Project's Out of scope
 - Declarative way of infrastructure deployment (which should be done as DevOps principles are part of Cloud Native architecture)
 - Using Continuous Integration/ Continuous Deployment (CI/CD) pipelines (as such is best practice to use in Cloud Native architecture)
-- Mapping of secrets by akv2k8s to application pods directelly without syncing to kubernetes secrets (as it can be another way of deployment akv2k8s project)
+- Mapping of secrets by akv2k8s to application pods directelly (using sidecar container) without syncing to kubernetes secrets (as it can be another way of deployment akv2k8s project, see akv2k8s documentation for details)
 
 # Prerequisities
 You need such prerequisities:
