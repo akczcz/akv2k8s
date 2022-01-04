@@ -598,12 +598,11 @@ Remember this output ... we will try to inject into variables our mapped secrets
 
 If we edit deployment file and apply file again (that is what DevOps pipelines should do after commit or pull request), then deployment will create new replicaset which will create new pods.
 
-Let's edit deployment file and add reference to its secrets, so add to deployment line new values (marked with commend #added new line):
+Let's edit deployment file and add reference to its secrets, so add to deployment line new values (marked with commend #added new line), you can also delete unnecessary fields like timestamps and status:
 ``` yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  creationTimestamp: null
   labels:
     app: nginx
   name: nginx
@@ -616,14 +615,11 @@ spec:
   strategy: {}
   template:
     metadata:
-      creationTimestamp: null
       labels:
         app: nginx
     spec:
       containers:
-      - image: nginx
-        name: nginx
-        env: # added new line
+      - env: # added new line
         - name: SECRET_NAME1 # added new line
           valueFrom: # added new line
             configMapKeyRef: # added new line
@@ -634,8 +630,9 @@ spec:
             configMapKeyRef: # added new line
               name: akv-sql # added new line
               key: sqlconnectionstring # added new line
+        image: nginx
+        name: nginx
         resources: {}
-status: {}
 ```
 
 And then, apply such changes, so run again:

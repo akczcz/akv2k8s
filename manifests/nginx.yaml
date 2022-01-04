@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: nginx
+  name: nginx
+  namespace: app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - env: # added new line
+        - name: SECRET_NAME1 # added new line
+          valueFrom: # added new line
+            configMapKeyRef: # added new line
+              name: akv-secret-name1 # added new line
+              key: secretname1 # added new line
+        - name: SQL_CONNECTION_STRING # added new line
+          valueFrom: # added new line
+            configMapKeyRef: # added new line
+              name: akv-sql # added new line
+              key: sqlconnectionstring # added new line
+        image: nginx
+        name: nginx
+        resources: {}
