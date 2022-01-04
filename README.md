@@ -577,9 +577,28 @@ Try to run command inside pod end look, whether there are any environment variab
 kubectl -n app exec nginx-6799fc88d8-cgc6z it -- printenv
 ```
 
+You should see output similar to:
+```
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+HOSTNAME=nginx-6799fc88d8-cgc6z
+NGINX_VERSION=1.21.5
+NJS_VERSION=0.7.1
+PKG_RELEASE=1~bullseye
+KUBERNETES_PORT=tcp://10.0.0.1:443
+KUBERNETES_PORT_443_TCP=tcp://10.0.0.1:443
+KUBERNETES_PORT_443_TCP_PROTO=tcp
+KUBERNETES_PORT_443_TCP_PORT=443
+KUBERNETES_PORT_443_TCP_ADDR=10.0.0.1
+KUBERNETES_SERVICE_HOST=10.0.0.1
+KUBERNETES_SERVICE_PORT=443
+KUBERNETES_SERVICE_PORT_HTTPS=443
+HOME=/root
+```
+Remember this output ... we will try to inject into variables our mapped secrets from kubernetes secrets, which is our goal.
+
 If we edit deployment file and apply file again (that is what DevOps pipelines should do after commit or pull request), then deployment will create new replicaset which will create new pods.
 
-Let's edit deployment file and add references to its secrets:
+Let's edit deployment file and add reference to its secrets, so add to deployment line new values (marked with commend #added new line):
 ``` yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -604,7 +623,24 @@ spec:
       containers:
       - image: nginx
         name: nginx
+      - env: # added new line
+        - name: SECRET_NAME1 # added new line
+          valueFrom: # added new line
+            configMapKeyRef: # added new line
+              name: akv-secret-name1 # added new line
+              key: secretname1 # added new line
+        - name: SQL_CONNECTION_STRING # added new line
+          valueFrom: # added new line
+            configMapKeyRef: # added new line
+              name: akv-sql # added new line
+              key: sqlconnectionstring # added new line
         resources: {}
 status: {}
+```
+
+And then, apply such changes, so run again:
+```
+cd ~/manifests
+kubectl apply -f  nginx.yaml
 ```
 
