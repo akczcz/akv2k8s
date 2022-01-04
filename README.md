@@ -178,6 +178,7 @@ az aks create \
     --generate-ssh-keys \
     --name $AKS_NAME
 ```
+If you got errors with syntax statements, then update az cli using ```az update``` command, see requirements at the beginning of this LAB.
 
 Get access to AKS cluster for yourself:
 ``` azcli
