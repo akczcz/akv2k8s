@@ -143,8 +143,9 @@ az role assignment create \
 
 ### Deployment of additional RBAC assignmnet
 
-Map need access rights for managed identities, AKS cluster's User Assigned Managed Identity has to have access rights to AKS's clusters Kubelet User Assigned Managed Identity.
-Export AKS cluster's User Assigned Managed Identity principalId as environment variable
+Map needed access rights for managed identities, AKS cluster's User Assigned Managed Identity has to have access rights to AKS's clusters Kubelet User Assigned Managed Identity.
+
+Export AKS cluster's User Assigned Managed Identity principalId as environment variable UAMI_ID_PRINCIPALID:
 ``` azcli
 UAMI_ID_PRINCIPALID=$(az identity show \
     --resource-group $GROUP_NAME \
@@ -152,7 +153,8 @@ UAMI_ID_PRINCIPALID=$(az identity show \
     --name $UAMI_NAME \
     -o tsv)
 ```
-Create needed role assignment
+
+Create needed role assignment:
 ``` azcli
 az role assignment create \
     --assignee $UAMI_ID_PRINCIPALID \
