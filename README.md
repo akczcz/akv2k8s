@@ -162,10 +162,11 @@ az role assignment create \
     --scope $UAMI_KUBELET_ID
 ```
 
-### Deployment of AKS
+### Deployment of Azure Kubernetes Services (AKS)
 
-Deploy Azure Kubernetes Services (AKS) with deployment options connected to resources created with previous steps
+Deploy Azure Kubernetes Services (AKS) with deployment options connected to resources created with previous steps, change AKS_NAME environment value, as it must be globally unique:
 ``` azcli
+# change the name aks-aktest with your value, it must be globally unique!
 AKS_NAME=aks-aktest
 az aks create \
     --resource-group $GROUP_NAME \
@@ -177,17 +178,20 @@ az aks create \
     --generate-ssh-keys \
     --name $AKS_NAME
 ```
-Get access to AKS cluster
+
+Get access to AKS cluster for yourself:
 ``` azcli
 # Get cluster credentials
 az aks get-credentials \
     --resource-group $GROUP_NAME \
     --name $AKS_NAME
 ```
-Try cluster level access using "kubectl" utility
+
+Try cluster level access using "kubectl" utility:
 ``` azcli
 kubectl get nodes
 ```
+
 You should obtain result similar to:
 ``` 
 kolarik@Azure:~$ kubectl get nodes
