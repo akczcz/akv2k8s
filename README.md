@@ -516,4 +516,95 @@ Now let's try to deploy easy application and reference such secrets from an appl
 cd ~/manifests
 kubectl create deployment nginx --image=nginx --dry-run=client --namespace=app -o yaml > nginx.yaml
 ```
+Command will use dry run to create nginx.yaml deployment file and prepare it for deployment of nginx image from public registry of https://hub.docker.com, with latest tag, and name such deployment as "nginx" and put it into our "app" namespace, where we allready synced secrets from AzureKeyVault.
+
+If you look at this file by cut command you should see something similar to:
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: nginx
+  name: nginx
+  namespace: app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - image: nginx
+        name: nginx
+        resources: {}
+status: {}
+```
+
+If you apply such deployment file, it will create deployment,replicaset and pods. Let's try it, run command in manifests directory:
+```
+cd ~/manifests
+kubectl apply -f  nginx.yaml
+```
+
+Let's check what was created by running command:
+```
+kubectl -n app get deploy,pod,rs,service
+```
+
+You should see output similar to:
+```
+NAME                    READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/nginx   1/1     1            1           33s
+
+NAME                         READY   STATUS    RESTARTS   AGE
+pod/nginx-6799fc88d8-cgc6z   1/1     Running   0          33s
+
+NAME                               DESIRED   CURRENT   READY   AGE
+replicaset.apps/nginx-6799fc88d8   1         1         1       33s
+```
+So, we created one deployment, one replicaset and one deployment.
+
+Try to run command inside pod end look, whether there are any environment variables now, we will run ```printenv``` command inside container, do not forget to exchange pod name with your real one:
+```
+# change pod name nginx-6799fc88d8-cgc6z with your real one
+kubectl -n app exec nginx-6799fc88d8-cgc6z it -- printenv
+```
+
+If we edit deployment file and apply file again (that is what DevOps pipelines should do after commit or pull request), then deployment will create new replicaset which will create new pods.
+
+Let's edit deployment file and add references to its secrets:
+``` yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: nginx
+  name: nginx
+  namespace: app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - image: nginx
+        name: nginx
+        resources: {}
+status: {}
+```
 
