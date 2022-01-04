@@ -510,3 +510,10 @@ You will see decoded secret value :)
 
 ### Deploy test application and reference secrets
 
+Now let's try to deploy easy application and reference such secrets from an application, to test whole concept.
+```
+# Go to the manigests folder if you did not so far
+cd ~/manifests
+kubectl create deployment nginx --image=nginx --dry-run=client -o yaml > nginx.yaml
+```
+
