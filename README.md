@@ -691,3 +691,10 @@ KUBERNETES_SERVICE_HOST=10.0.0.1
 HOME=/root
 ```
 ![image](/img/printenv.PNG)
+
+If you come to this point, you reached our goal, you synced Azure KeyVault secrets to kubernetes secrets and mapped them to application.  
+Now you can delete your resource group to clean resources in your lab:
+``` azcli
+az group delete --resource-group $GROUP_NAME
+```
+
