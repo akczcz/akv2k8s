@@ -201,10 +201,10 @@ aks-nodepool1-41796624-vmss000000   Ready    agent   15m   v1.21.7
 aks-nodepool1-41796624-vmss000001   Ready    agent   15m   v1.21.7
 ```
 
-
 ## Deployment of akv2k8s controller
 
 ### Deploy kubernetes namespace
+Deploy kubernetes namespace:
 ``` azcli
 NAMESPACE_NAME=akv2k8s
 kubectl create namespace $NAMESPACE_NAME --dry-run=client -o yaml | kubectl apply -f -
