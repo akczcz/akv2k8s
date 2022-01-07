@@ -53,16 +53,16 @@ az acr create \
     --name $ACR_NAME \
     --sku Basic
 ```
-### Deployment of User Assigned Managed Identities for AKS
+### Deployment User Assigned Managed Identities pro AKS
 
-Deploy Azure User Assigned Managed Identity of AKS cluster, change UAMI_NAME variable with your value:  
+Vytvořte  Azure User Assigned Managed Identity pro AKS cluster, zaměňte hodnotu proměnné UAMI_NAME za vlasntí název:  
 ``` azcli
 UAMI_NAME=uami-aks
 az identity create \
     --resource-group $GROUP_NAME \
     --name $UAMI_NAME
 ```
-Export managed identity's id value into new variable UAMI_ID (will be referenced later):
+Vyexportujte ID managed identity do nové proměnné UAMI_ID (bude použita později):
 ``` azcli
 UAMI_ID=$(az identity show \
     --resource-group $GROUP_NAME \
@@ -70,14 +70,14 @@ UAMI_ID=$(az identity show \
     --name $UAMI_NAME \
     -o tsv)
 ```
-Deploy Azure User Assigned Managed Identity of AKS cluster Kubelet, change UAMI_KUBELET_NAME variable with your value:
+Vytvořte Azure User Assigned Managed Identity pro AKS cluster resp. Kubelet, změňte hodnotu proměnné UAMI_KUBELET_NAME za vlastní název:
 ``` azcli
 UAMI_KUBELET_NAME=uami-aks-kubelet
 az identity create \
     --resource-group $GROUP_NAME \
     --name $UAMI_KUBELET_NAME
 ```
-Export kubelet's managed identity id value into variable UAMI_KUBELET_ID (will be referenced later):
+Vyexportujte ID managed identity Kubeletu do nové proměnné UAMI_KUBELET_ID (bude použita později):
 ``` azcli
 UAMI_KUBELET_ID=$(az identity show \
     --resource-group $GROUP_NAME \
@@ -86,8 +86,8 @@ UAMI_KUBELET_ID=$(az identity show \
     -o tsv)
 ```
 
-### Deploy Azure KeyVault (AKV) with integration to Azure RBAC
-Create Azure KeyVault instance, change KV_NAME variable value with your value, it must be globally unique:
+### Deployment Azure KeyVault (AKV) s integrací na Azure RBAC
+Vytvořte Azure KeyVault instanci, změňte hodnotu proměnné KV_NAME za vlasntí název, musí být globálně unikátní:
 ``` azcli
 # change the name kv-testaks with your value, it must be globally unique!
 KV_NAME=kv-tstaks
@@ -98,7 +98,7 @@ az keyvault create \
     --name $KV_NAME
 ```
 
-Export KeyVault's id value into variable KV_ID:
+Vyexportujte ID KeyVaultu do nové proměnné KV_ID:
 ``` azcli
 KV_ID=$(az keyvault show \
     --resource-group $GROUP_NAME \
@@ -107,7 +107,7 @@ KV_ID=$(az keyvault show \
     -o tsv)
 ```
 
-Export of Kubelet's User Assigned Managed Identity principalId into variable UAMI_KUBELET_PRINCIPALID (it will be accessing Azure KeyVault for secrets):
+Vyexportujte principalId User Assigned Managed Identity Kubeletu do nové proměnné UAMI_KUBELET_PRINCIPALID (bude použita Kubeletem pro přístup k Azure KeyVaultu, resp. k secrets v něm uloženým):
 ``` azcli
 UAMI_KUBELET_PRINCIPALID=$(az identity show \
     --resource-group $GROUP_NAME \
@@ -116,9 +116,9 @@ UAMI_KUBELET_PRINCIPALID=$(az identity show \
     -o tsv)
 ```
 
-And add accesss rights for Secrets in Azure KeyVault.
-Create such role assignment for Managed Identity, which will AKS use. 
-Add built in role Azure Key Vault Secret user "https://docs.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#key-vault-secrets-user":
+A zároveň přidejte takové identitě přístupové oprávnění právě pro secrets daného Azure KeyVaultu.  
+To provedete tak, že vytvoříte role assignment pro Managed Identitu, kterou AKS cluster používá. 
+K tomu použijte built in roli která je popsána v dokumentaci "https://docs.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#key-vault-secrets-user":
 ``` azcli
 az role assignment create \
     --assignee $UAMI_KUBELET_PRINCIPALID \
@@ -126,15 +126,15 @@ az role assignment create \
     --scope $KV_ID
 ```
 
-It is also good idea, to add RBAC of role Azure Key Vault Secret Officer to any object ID of user/person/identity, which will be responsible for secret management in Azure KeyVault.
-Let's export environment variable objectId actually signed user into variable USER_NAME_OBJECTID:
+V tuto chvíli je taktéž dobrý nápad přidat AAD RBAC roli Azure Key Vault Secret Officer někomu člověku/týmu/identitě, kdo bude zodpovědný za životní cyklus secretů v Azure KeyVault.
+Vytvořme tedy proměnnou, která vyexportuje objectId aktuálně přihlášeného uživatele do nové proměnné USER_NAME_OBJECTID:
 ``` azcli
 USER_NAME_OBJECTID=$(az ad signed-in-user show \
     --query "objectId" \
     -o tsv)
 ```
 
-Add built-in role assignment of Azure Key Vault Secret Officer https://docs.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#key-vault-secrets-officer to user identity:
+A následně přidejme této proměnné built-in roli Azure Key Vault Secret Officer https://docs.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#key-vault-secrets-officer:
 ``` azcli
 az role assignment create \
     --assignee $USER_NAME_OBJECTID \

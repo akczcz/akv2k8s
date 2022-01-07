@@ -86,7 +86,7 @@ UAMI_KUBELET_ID=$(az identity show \
     -o tsv)
 ```
 
-### Deploy Azure KeyVault (AKV) with integration to Azure RBAC
+### Deployment Azure KeyVault (AKV) with integration to Azure RBAC
 Create Azure KeyVault instance, change KV_NAME variable value with your value, it must be globally unique:
 ``` azcli
 # change the name kv-testaks with your value, it must be globally unique!
