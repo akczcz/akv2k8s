@@ -194,7 +194,7 @@ Vyzkoušejte přístup do AKS clusteru s použitím "kubectl" utility:
 kubectl get nodes
 ```
 
-Měli byste obdržet výsledek podobný tomuto:
+Měli byste obdržet výstup podobný tomuto:
 ``` 
 kolarik@Azure:~$ kubectl get nodes
 NAME                                STATUS   ROLES   AGE   VERSION
@@ -202,44 +202,44 @@ aks-nodepool1-41796624-vmss000000   Ready    agent   15m   v1.21.7
 aks-nodepool1-41796624-vmss000001   Ready    agent   15m   v1.21.7
 ```
 
-## Deployment of akv2k8s controller
+## Deployment akv2k8s controlleru
 
 ### Deploy kubernetes namespace
-Deploy kubernetes namespace:
+Vytvořte kubernetes namespace:
 ``` azcli
 NAMESPACE_NAME=akv2k8s
 kubectl create namespace $NAMESPACE_NAME --dry-run=client -o yaml | kubectl apply -f -
 ```
 
-You should get output like this:
+Měli byste obdržet výstup podobný tomuto:
 ```
 namespace/akv2k8s created
 ```
 ### Deploy akv2k8s controller using helm chart
-Now, we will deploy akv2k8s controller using helm chart's to our kubernetes namespace.
-Add "spv-charts" repository:
+Nyní, vytvořte akv2k8s controller s použitím helm chartu do kubernetes namespace.
+Přidejte "spv-charts" do lokálního repository:
 ``` azcli
 helm repo add spv-charts https://charts.spvapi.no
 ```
 
-you should get output like this:
+Měli byste obdržet výstup podobný tomuto:
 ```
 "spv-charts" has been added to your repositories
 ```
 
-Next, update local helm repository cache:
+Nyní aktualizujte cache lokálního helm repository:
 ```
 helm repo update
 ```
 
-You should get output like this:
+Měli byste obdržet výstup podobný tomuto:
 ```
 Hang tight while we grab the latest from your chart repositories...
 ...Successfully got an update from the "spv-charts" chart repository
 Update Complete. ⎈Happy Helming!⎈
 ```
 
-Next, run "helm upgrade" with parameters:
+Nyní nainstalujte controller s využitím "helm upgrade" a parametrů:
 ```
 helm upgrade -i \
     akv2k8s \
@@ -247,7 +247,7 @@ helm upgrade -i \
     --namespace $NAMESPACE_NAME
 ```
 
-You should get output like this:
+Měli byste obdržet výstup podobný tomuto:
 ```
 Release "akv2k8s" does not exist. Installing it now.
 W0103 11:43:23.082623     167 warnings.go:67] policy/v1beta1 PodDisruptionBudget is deprecated in v1.21+, unavailable in v1.25+; use policy/v1 PodDisruptionBudget
@@ -263,21 +263,21 @@ Congratulations! You've successfully installed Azure Key Vault to Kubernetes.
 For more information see the documentation at https://akv2k8s.io.
 ```
 
-If you come to this point, you sucessfully deployed needed infrastructure, including AKS and controller akv2k8s inside kubernetes cluster.
+Jestli jste došli až sem, tak jste úspěšně nainstalovali potřebnou infrastrukturu, včetně AKS clusterz a controlleru akv2k8s dovnitř kubernetes clusteru.
 
-Now, you can see, that there is new type of API resources available, try to run:
+Nyní můžete vidět, že se nám API schéma aktualizovalo o nové API, zkuste pustit následující příkaz:
 ```
 kubectl -n akv2k8s api-resources
 ```
-and you will see in your output also akvs object type:
+a uvidíte, že je zde nový typ objektu "akvs":
 ![image](/img/akv-API.PNG)
 
-Let's see what type of object does deployment did:
+Podívejme se co vše nám helm chart vytvořil:
 ```
 kubectl -n akv2k8s get all
 ```
 
-You should get output similar to:
+Měli byste obdržet výstup podobný tomuto:
 ```
 NAME                                       READY   STATUS    RESTARTS   AGE
 pod/akv2k8s-controller-d4ff9564c-qc5vk     1/1     Running   0          109m
@@ -297,12 +297,12 @@ replicaset.apps/akv2k8s-controller-d4ff9564c     1         1         1       109
 replicaset.apps/akv2k8s-envinjector-69f4d6bcb9   2         2         2       109m
 ```
 
-You can look at the akv2k8s's controller logs by typing command bellow, exchange the name of pod akv2k8s-controller-d4ff9564c-qc5vk with your real name of controller pod:
+Můžete se podívat na logy controlleru nově vytvořeného controlleru akv2k8s, zaměňte ale název podu akv2k8s-controller-d4ff9564c-qc5vk za tu vaši, kterou jste získali ve výstupu z předchozího příkazu:
 ```
 kubectl -n akv2k8s logs akv2k8s-controller-d4ff9564c-qc5vk
 ```
 
-You should see output similar to:
+Měli byste obdržet výstup podobný tomuto:
 ```
 I0104 09:44:44.261444       1 main.go:96] "log settings" format="text" level="2"
 I0104 09:44:44.261502       1 version.go:31] "version info" version="1.3.0" commit="a375982" buildDate="2021-08-06T06:52:07Z" component="controller"
@@ -315,7 +315,7 @@ I0104 09:44:45.336506       1 controller.go:199] "starting azure key vault delet
 I0104 09:44:45.336516       1 controller.go:202] "starting azure key vault queue"
 I0104 09:44:45.336525       1 controller.go:205] "started workers"
 ```
-!!! Remember how to see controller logs, you will mostly propably use such logs in case of any troubleshooting, you will see syncing information with secrets in this logs, including possible troubles !!!
+!!! Pamatujte si, jak se podíváte na logy controlleru, velmi pravděpodobně budete takové logy využívat v případě řešení jakýchkoliv obtíží, uvidíte zde informace ohledně synchronizace secrets, včetně případných potíží !!!
 
 ### Deploy test secrets into Azure KeyVault
 We will deploy test secrets into Azure KeyVault, you can change the variables and its values any way, but then you should update scripts bellow and also mapping kubernetes objects defined later in this LAB: 
