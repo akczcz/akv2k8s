@@ -8,16 +8,16 @@ Dále budete nejspíše orchestrovat takové declarativní definice ve svých Co
 Infrastruktura popsaná níže neobsahuje jiné bezpečnostně orientované témata, která by měla být braná v úvahu a implementovaná s ohledem na základní bezpečnostní úroveň cloud poskytovatele a bezpečnostní úrovně dle požadavků ve vašem projektu (to může být např.: private endpoints, private cluster deployment, encryption at rest, pokročilejší integrace na AAD atp.).   
 Taktéž byste vždy při používání open source projektů jako je akv2k8s měli navštívit github stránky projektu (https://github.com/SparebankenVest/akv2k8s-website/blob/master/source/content/index.mdx) a popřemýšlet o všech aspektech použití vámi vybraného  OpenSource projektu před tím, než ho využijete.
 
-# Project's Goal
-Goal of this project is:
-- Test akv2k8s project implementation with Azure Kubernetes Services
-- Test the functionality of replication secrets between Azure KeyVault and Azure Kubernetes Services (synchronization of secrets into kubernetes secrets, which are persistently stored in etcd database)
-- Test the functionality with providing such synced secret as pod's environment variable
-- Deployment of infastructure according to the design bellow:  
+# Cíl projektu
+Cílem tohoto projektu je:
+- test akv2k8s projektu implementací do Azure Kubernetes Services
+- test funkcionality replikace tzv "secrets" mezi instancemi služeb Azure KeyVault and Azure Kubernetes Services (synchronizace secrets do kubernetes secrets, které jsou trvale uložené v etcd databázi)  
+- test funkcionality ve smyslu mapování synchronizovaných secrets jako proměnných do podu, ve kterém běží aplikační kontejner 
+- deployment infastruktury dle tohoto designu:  
 ![image](/img/akv2k8s.drawio.png)
 
 
-# Project's Out of scope
+# Co není součástí projektu
 - Declarative way of infrastructure deployment (which should be done as DevOps principles are part of Cloud Native architecture)
 - Using Continuous Integration/ Continuous Deployment (CI/CD) pipelines (as such is best practice to use in Cloud Native architecture)
 - Mapping of secrets by akv2k8s to application pods directelly (using sidecar container) without syncing to kubernetes secrets (as it can be another way of deployment akv2k8s project, see akv2k8s documentation for details)
