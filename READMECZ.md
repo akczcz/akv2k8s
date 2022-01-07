@@ -41,10 +41,10 @@ az group create \
     --resource-group $GROUP_NAME
 ```
 
-### Deployment of Azure Container Registry (ACR)
+### Deployment Azure Container Registry (ACR)
 
-Deploy Azure Container Registry (ACR).
-The name of ACR must be globally unique, so exchange the name of ACR defined in ACR_NAME variable with your own value:
+Vytvořte Azure Container Registry (ACR).
+Název ACR musí být globálně unikátní, proto zaměňte název ACR v proměnné ACR_NAME za vámi vybraný název:
 ``` azcli
 # change the name acraktestaks with your value, it must be globally unique!
 ACR_NAME=acraktestaks
