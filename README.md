@@ -1,4 +1,4 @@
-EN [EN](README.md) | CZ [CZ](README CZ.md)  
+EN [EN](README.md) | CZ [CZ](READMECZ.md)  
 ![image](/img/thumbnail.jfif)
 # Implementation of akv2k8s in Azure Kubernetes Services (AKS)
 This is LAB implementation of project akv2k8s (see https://akv2k8s.io/ for documentation) in Azure Kuberenetes Services / AKS (see https://docs.microsoft.com/en-us/azure/aks/ for documentation).  
