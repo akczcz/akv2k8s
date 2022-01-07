@@ -87,7 +87,7 @@ UAMI_KUBELET_ID=$(az identity show \
 ```
 
 ### Deployment Azure KeyVault (AKV) s integrací na Azure RBAC
-Vytvořte Azure KeyVault instanci, změňte hodnotu proměnné KV_NAME za vlasntí název, musí být globálně unikátní:
+Vytvořte Azure KeyVault instanci, změňte hodnotu proměnné KV_NAME za vlastní název, musí být globálně unikátní:
 ``` azcli
 # change the name kv-testaks with your value, it must be globally unique!
 KV_NAME=kv-tstaks
