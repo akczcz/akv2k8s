@@ -163,9 +163,9 @@ az role assignment create \
     --scope $UAMI_KUBELET_ID
 ```
 
-### Deployment of Azure Kubernetes Services (AKS)
+### Deployment Azure Kubernetes Services (AKS)
 
-Deploy Azure Kubernetes Services (AKS) with deployment options connected to resources created with previous steps, change AKS_NAME environment value, as it must be globally unique:
+Vytvořte Azure Kubernetes Services (AKS) s použitím níže uvedených parametrů (využíváme dříve exportované proměnné), změňte hodnotu proměnné AKS_NAME za vlastní název, musí být globálně unikátní:
 ``` azcli
 # change the name aks-aktest with your value, it must be globally unique!
 AKS_NAME=aks-aktest
@@ -179,9 +179,9 @@ az aks create \
     --generate-ssh-keys \
     --name $AKS_NAME
 ```
-If you got errors with syntax statements, then update az cli using ```az update``` command, see requirements at the beginning of this LAB.
+V případě, že dostanete chybové hlášky s upozorněním na neznámé argumenty, tak aktualizujte az cli s použitím  ```az update``` příkazu, viz minimální požadavky v úvodní sekci labu.
 
-Get access to AKS cluster for yourself:
+Vygenerujte si .kubeconfig soubor abyste měli přístup do AKS clusteru:
 ``` azcli
 # Get cluster credentials
 az aks get-credentials \
@@ -189,12 +189,12 @@ az aks get-credentials \
     --name $AKS_NAME
 ```
 
-Try cluster level access using "kubectl" utility:
+Vyzkoušejte přístup do AKS clusteru s použitím "kubectl" utility:
 ``` azcli
 kubectl get nodes
 ```
 
-You should obtain result similar to:
+Měli byste obdržet výsledek podobný tomuto:
 ``` 
 kolarik@Azure:~$ kubectl get nodes
 NAME                                STATUS   ROLES   AGE   VERSION
