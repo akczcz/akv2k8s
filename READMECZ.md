@@ -30,9 +30,9 @@ Pro realizaci projektu je nezbytné:
 
 Níže v LABu použijeme variantu Azure CLI.
 
-## Preparation tasks - infrastructure deployment in Azure Resource Group
+## Přípravné práce - deployment Azure infrastruktury do Azure Resource Group
 
-Create resource group for deployment any other resources in your subscription, change group name in GROUP_NAME variable and change location in LOCATION variable definition (see available regions at: https://azure.microsoft.com/en-us/global-infrastructure/geographies/#overview):
+Vytvořte resource group do které budete následně provádět deployment dalších instancí služeb, změňte název resource group v proměnné GROUP_NAME a vámi požadovaný azure region v proměnné LOCATION (pro seznam všech azure regionů využijte dokumentaci: https://azure.microsoft.com/en-us/global-infrastructure/geographies/#overview):
 ``` azcli
 GROUP_NAME=rg-aks-test
 LOCATION=northeurope
