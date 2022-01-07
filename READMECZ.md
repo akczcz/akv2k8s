@@ -215,7 +215,7 @@ Měli byste obdržet výstup podobný tomuto:
 ```
 namespace/akv2k8s created
 ```
-### Deploy akv2k8s controller using helm chart
+### Deploy akv2k8s controlleru s použitím helm chartu
 Nyní, vytvořte akv2k8s controller s použitím helm chartu do kubernetes namespace.
 Přidejte "spv-charts" do lokálního repository:
 ``` azcli
