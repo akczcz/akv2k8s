@@ -22,13 +22,13 @@ Cílem tohoto projektu je:
 - využítí Using Continuous Integration/ Continuous Deployment (CI/CD) pipelines (taktéž jako best practice pro Cloud Native architekturu)
 - mapování secrets projektem akv2k8s do aplikačního kontejneru napřímo (s použitím sidecar kontejneru) bez synchronizace do kubernetes secrets (jedná se o další způsob implementace projektu akv2k8s, pro více informací využijte dokumentaci projektu)  
 
-# Prerequisities
-You need such prerequisities:
-- Azure Subscription (RBAC assignment of owner resource group you will be creating)
-- Laptop with CLI (Windows with Powershell, Linux, Mac, whatever) or use Azure Cloud shell, if you need install Azure CLI use https://docs.microsoft.com/en-us/cli/azure/install-azure-cli
-- Azure CLI must have at least version "2.31.0", use "az upgrade" command to upgrade to latest version, it is recommended to use extention "aks-preview" with minal version "0.5.49"
+# Předpoklady
+Pro realizaci projektu je nezbytné:
+- mít Azure subscribci (potřebujete mít oprávnění owner, k resource group kterou budeme vytvářet, tj v ideálním případě je mít oprávnění owner už na subscribci ve které budeme resource group vytvářet)
+- Laptop s příkazovou řádkou (Windows with Powershell, Linux, Mac, či cokoliv jiného) nebo využít Azure Cloud shell, jestli potřebujete do svého CLI instalovat Azure CLI, využijte odkaz  https://docs.microsoft.com/en-us/cli/azure/install-azure-cli
+- Azure CLI musí být ve verzi minimálně "2.31.0", použijte "az upgrade" příkaz pro povýšení Azure CLI na nejnovější verzi, zároveň je nutné mít nainstalované rozšíření Azure CLI "aks-preview" v minimální verzi "0.5.49"
 
-I will use Azure CLI for this LAB.
+Níže v LABu použijeme variantu Azure CLI.
 
 ## Preparation tasks - infrastructure deployment in Azure Resource Group
 
