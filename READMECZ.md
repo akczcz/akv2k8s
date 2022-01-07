@@ -263,7 +263,7 @@ Congratulations! You've successfully installed Azure Key Vault to Kubernetes.
 For more information see the documentation at https://akv2k8s.io.
 ```
 
-Jestli jste došli až sem, tak jste úspěšně nainstalovali potřebnou infrastrukturu, včetně AKS clusterz a controlleru akv2k8s dovnitř kubernetes clusteru.
+Jestli jste došli až sem, tak jste úspěšně nainstalovali potřebnou infrastrukturu, včetně AKS clusteru a controlleru akv2k8s dovnitř kubernetes clusteru.
 
 Nyní můžete vidět, že se nám API schéma aktualizovalo o nové API, zkuste pustit následující příkaz:
 ```
@@ -317,8 +317,8 @@ I0104 09:44:45.336525       1 controller.go:205] "started workers"
 ```
 !!! Pamatujte si, jak se podíváte na logy controlleru, velmi pravděpodobně budete takové logy využívat v případě řešení jakýchkoliv obtíží, uvidíte zde informace ohledně synchronizace secrets, včetně případných potíží !!!
 
-### Deploy test secrets into Azure KeyVault
-We will deploy test secrets into Azure KeyVault, you can change the variables and its values any way, but then you should update scripts bellow and also mapping kubernetes objects defined later in this LAB: 
+### Vytvoření testovacích secrets v Azure KeyVault
+Vytvoříme testovací secrets v Azure KeyVaultu, můžete jakkoliv změnit hodnoty proměnných, jen si pak nezapomeňte aktualizovat konfigurační scripty v následujících sekcích, jelikož ty konfigurační scripty nejsou parametrizované a mapují se přímo na tyto hodnoty: 
 ``` azcli
 SECRET_NAME1="secretname1"
 SECRET_VALUE1="TopSecretPassword"
@@ -335,7 +335,7 @@ az keyvault secret set \
     --value $SECRET_SQL_VALUE
 ```
 
-You should get output's like this (for each secret definition):
+Měli byste pro každý secret obdržet výstup podobný tomuto: 
 ```
 {
   "attributes": {
@@ -357,42 +357,43 @@ You should get output's like this (for each secret definition):
   "value": "TopSecretConnectionString"
 }
 ```
-I let whole id in the output, to let you see whole id containing name of the secret (/sqlconnectionstring/) and its version at the end (/80a419159fb94611a91f616295bd33bf), version will be changing in future editing of secret and akv2k8s controller in kubernetes will be syncing such new versions inside kubernetes secrets.
+Záměrně jsem zde nechal celý výstup, tak abyste viděli celé id secretu, včetně jeho názvu (/sqlconnectionstring/) a jeho verze  (/80a419159fb94611a91f616295bd33bf), verze se s každou další změnou mění a  akv2k8s controller v kubernetes synchronizuje právě nové verze do kubernetes secrets.  
 
-You can list created secrets by typing:
+Můžete si zobrazit všechny secrety z keyvaultu:
 ```
 az keyvault secret list --vault-name $KV_NAME -o table
 ```
 
-You should get output similar to:
+Měli byste obdržet výstup podobný tomuto:
 ```
 Name                 Id                                                             ContentType    Enabled    Expires
 -------------------  -------------------------------------------------------------  -------------  ---------  ---------
 secretname1          https://kv-tstaks.vault.azure.net/secrets/secretname1                         True
 sqlconnectionstring  https://kv-tstaks.vault.azure.net/secrets/sqlconnectionstring                 True
 ```
-or you can list secrets in GUI of Azure KeyVault instance.
+nebo si můžete zobrazit seznam secrets v GUI Azure KeyVault instance.
 
-### Deploy kubernetes mapping objects (akvs)
-Let's create namespace for application, we will put our synchronized secrets to that namespace, because, we will reference them to the application in the same namespace az an application:
+### Vytvoření akvs mapovacích objektů uvnitř kubernetes (akvs)
+Neprve vytvořte namespace pro aplikaci, později v tomto namespace vytvoříme secrets, je nutné mít secrets ve stejném namespace jako aplikaci z důvodu budoucích referencí:
 ``` azcli
 NAMESPACE_NAME_APP=app
 kubectl create namespace $NAMESPACE_NAME_APP --dry-run=client -o yaml | kubectl apply -f -
 ```
 
-You should get output like this:
+Měli byste obdržet výstup podobný tomuto:
 ```
 namespace/app created
 ```
 
-Now lets look at the file /manifests/akv.yaml, there are prepared 2 objects in declarative way, you can also clone this repo, to safe your time, if you want.
+Nyní se podívejte na soubor /manifests/akv.yaml, připravil jsem zde 2 objekty deklarativním způsobem, taktéž si můžete celé repository naklonovat do vašeho lokálního gitu:
 ```
 DIR_NAME=manifests
 mkdir $DIR_NAME
 cd $DIR_NAME
 vi akv.yaml #and put content of file bellow
 ```
-Change the values in yaml file to your values, focus on the fields marked with description with numbers and exchange such fields to your values
+
+!!! Změnte ale hodnoty v yaml souboru, tak aby se popis správně odkazoval na existující odkazy, všímejte si těch položek, za kterými je "#" a zkontrolujte validnost dané hodnoty:
 ``` yaml
 # secrets for Persistent storage
 apiVersion: spv.no/v2beta1
@@ -428,52 +429,52 @@ spec:
       dataKey: sqlconnectionstring # 6. key to store object value in kubernetes apiVersion: v1
 
 ```
-Then finaly save the manifest file:
+Následně tento manifest soubor uložte:
 ![image](/img/akv-yaml.PNG)
 
-Now let's deploy such manifests inside kubernetes:
+A následně proveďte deployment manifest souboru do kubernetes clusteru:
 ``` azcli
 kubectl apply -f ~/manifests/akv.yaml
 ```
 
-You should get output like this:
+Měli byste obdržet výstup podobný tomuto:
 ```
 azurekeyvaultsecret.spv.no/akvs-secret-name1 created
 azurekeyvaultsecret.spv.no/akvs-secret-sql created
 ```
 
-If there is some trouble, you will not see created secrets in synced state: 
+Vypište se seznam objektů akvs (mapovací objekty na kuberentes secrets dle předchozího yaml souboru): 
 ```
 kubectl -n app get akvs
 ```
 
-If there is some trouble, you will get:
+Jestli jste udělali někde chybu, tak pravděpodobně nevidíte objekty v synchronizovaném stavu:
 ```
 NAME                VAULT        VAULT OBJECT   SECRET NAME   SYNCHED   AGE
 akvs-secret-name1   kv-testaks   SECRET-NAME1                           20m
 akvs-secret-sql     kv-testaks   SECRET-SQL                             20m
 ```
 
-If your secrets are not synced correctly, go to the akv2k8s controller log ans see whats wrong (access rights, networking, referencing, etc).  
-If there is everything well done, you should see output similar to:
+Jestli objekty nejsou v synchronizovaném stavu, tak se běžte podívat na logy akv2k8s controlleru, tak jak jsme si již zkoušeli v předchozích krocích a podívejte se v logu co je chybně (mohou to být přístupové práva, sítě, reference atp.).  
+Jestli jste vše udělali bez chyby, tak byste měli obdržet výstup podobný tomuto:
 ```
 NAME                VAULT        VAULT OBJECT          SECRET NAME        SYNCHED   AGE
 akvs-secret-name1   kv-testaks   secretname1           akv-secret-name1   5s        5m44s
 akvs-secret-sql     kv-testaks   sqlconnectionstring   akv-sql            5s        5m44s
 ```
 
-You should also check created secrets, type:
+Zároveň byste měli zkontrolovat, zda-li bytvořeny nějaké objekty typu kubernetes secrets:
 ```
 kubectl -n app get secrets
 ```
 
-If there is trouble, you will se only default kubernetes secret without newly created ones:
+V případě potíží uvidíte pouze default servisní token secret:
 ```
 NAME                  TYPE                                  DATA   AGE
 default-token-4fjp5   kubernetes.io/service-account-token   3      38m
 ```
 
-If your akvs objects are in synced state, you will see newly created kubernetes secrets: 
+Jestli jsou vaše akvs objekty správně synchronizované, dostanete výstup podobný tomuto: 
 ```
 NAME                  TYPE                                  DATA   AGE
 akv-secret-name1      Opaque                                1      96s
@@ -481,12 +482,12 @@ akv-sql               Opaque                                1      96s
 default-token-4fjp5   kubernetes.io/service-account-token   3      72m
 ```
 
-Let's try to describe secret to see, whether there is some content:
+Zkuste si následně popsat nějaký secret a podívat se do něj, zda-li něco obsahuje:
 ```
 kubectl -n app describe secret akv-secret-name1
 ```
 
-You should see output similar to:
+Měli byste obdržet výstup podobný tomuto:
 ```
 kolarik@Azure:~$ kubectl -n app describe secret akv-secret-name1
 Name:         akv-secret-name1
@@ -501,15 +502,15 @@ Data
 secretname1:  17 bytes
 ```
 
-As you may know, secrets inside kubernetes are stored in ETCD database, and they are not encrypted, they are encoded with base64 algorithm.
-So, let's try to decode data value from secret and see its value:
+Jak asi nejspíše víte, tak kubernetes secrets jsou ukládány do perzistentní vrstvy kubernetes, tj do databáze etcd.  
+Ta není šifrovaná, položky v ní jsou encodované base64 algoritmem, to znamená, že v případě, že v daném namespace máme příslušené oprávnění, můžeme zkusit si daný obsah zobrazit a přes base64 utilitu dekódovat:
 ``` azcli
 kubectl -n app get secrets/akv-secret-name1 --template={{.data.secretname1}} | base64 -d
 ```
 
-You will see decoded secret value :)
+Z výstupu bychom měli dostat dekódovaný obsah :)
 
-### Deploy test application and reference secrets
+### Vytvoření testovací aplikace a mapování objektů/secrets
 
 Now let's try to deploy easy application and reference such secrets from an application, to test whole concept.
 ```
