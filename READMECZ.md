@@ -3,9 +3,9 @@
 # Implementace akv2k8s v Azure Kubernetes Services (AKS)
 Tento LAB popisuje implementaci projektu akv2k8s (viz dokumentace https://akv2k8s.io/ ) v Azure Kuberenetes Services / AKS (viz dokumentace https://docs.microsoft.com/en-us/azure/aks/).  
 LAB používá imperativní způsob deploymentu (Azure CLI příkazy v našem případě).   
-Ve svých prostředích pravděpodobně použijete declarativní způsob deploymentu instancí služeb, tzn. definování infrastruktury jako kód (Infrastructure As A Code) prostřednictvím Azure Resource Manager (ARM), Bicep, nebo Terraform způsobu declarativní definice instancí služeb.  
-Dále budete nejspíše orchestrovat takové declarativní definice ve svých Continuous Integration/Continuous Deployment orchestračních pipelines (S použitím Azure DevOps, nebo Githubu, či jiného CI/CD nástroje).  
-Infrastruktura popsaná níže neobsahuje jiné bezpečnostňě orientované témata, která by měla být braná v úvahu a implementovaná s ohledeme na základní bezpečnostní úroveň cloud poskytovatele a bezpečnostní úrovně dle požadavků ve vašem projektu (to může být např.: private endpoints, private cluster deployment, encryption at rest, pokročilejší integrace na AAD atp.).   
+Ve svých prostředích pravděpodobně použijete declarativní způsob deploymentu instancí služeb, tzn. definování infrastruktury jako kód (Infrastructure As A Code) prostřednictvím Azure Resource Manager (ARM), Bicep, nebo Terraform.  
+Dále budete nejspíše orchestrovat takové declarativní definice ve svých Continuous Integration/Continuous Deployment pipelines (S použitím Azure DevOps, nebo Githubu, či jiného CI/CD nástroje).  
+Infrastruktura popsaná níže neobsahuje jiné bezpečnostně orientované témata, která by měla být braná v úvahu a implementovaná s ohledem na základní bezpečnostní úroveň cloud poskytovatele a bezpečnostní úrovně dle požadavků ve vašem projektu (to může být např.: private endpoints, private cluster deployment, encryption at rest, pokročilejší integrace na AAD atp.).   
 Taktéž byste vždy při používání open source projektů jako je akv2k8s měli navštívit github stránky projektu (https://github.com/SparebankenVest/akv2k8s-website/blob/master/source/content/index.mdx) a popřemýšlet o všech aspektech použití vámi vybraného  OpenSource projektu před tím, než ho využijete.
 
 # Project's Goal
