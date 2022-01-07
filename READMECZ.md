@@ -142,11 +142,11 @@ az role assignment create \
     --scope $KV_ID
 ```
 
-### Deployment of additional RBAC assignmnet
+### Deployment další nutné RBAC role
 
-Map needed access rights for managed identities, AKS cluster's User Assigned Managed Identity has to have access rights to AKS's clusters Kubelet User Assigned Managed Identity.
+Přidejte další nezbytné oprávnění pro managed identities. Tj přidejte oprávnění pro User Assigned Managed Identity AKS clusteru, tak aby měla roli owner nad User Assigned Managed Identity Kubelet serveru (krok nutný pro úspěšnost následného deploymentu AKS clusteru)
 
-Export AKS cluster's User Assigned Managed Identity principalId as environment variable UAMI_ID_PRINCIPALID:
+Vyexportujte principalId User Assigned Managed Identity AKS clusteru jako novou proměnnou UAMI_ID_PRINCIPALID:  
 ``` azcli
 UAMI_ID_PRINCIPALID=$(az identity show \
     --resource-group $GROUP_NAME \
@@ -155,7 +155,7 @@ UAMI_ID_PRINCIPALID=$(az identity show \
     -o tsv)
 ```
 
-Create needed role assignment:
+Vytvořte nový role assignment:  
 ``` azcli
 az role assignment create \
     --assignee $UAMI_ID_PRINCIPALID \
