@@ -24,7 +24,7 @@ Cílem tohoto projektu je:
 
 # Předpoklady
 Pro realizaci projektu je nezbytné:
-- mít Azure subscribci (potřebujete mít oprávnění owner, k resource group kterou budeme vytvářet, tj v ideálním případě je mít oprávnění owner už na subscribci ve které budeme resource group vytvářet)
+- mít přístup k Azure subscribci (potřebujete mít oprávnění owner, k resource group kterou budeme vytvářet, tj v ideálním případě je mít oprávnění owner už na subscribci ve které budeme resource group vytvářet)
 - Laptop s příkazovou řádkou (Windows with Powershell, Linux, Mac, či cokoliv jiného) nebo využít Azure Cloud shell, jestli potřebujete do svého CLI instalovat Azure CLI, využijte odkaz  https://docs.microsoft.com/en-us/cli/azure/install-azure-cli
 - Azure CLI musí být ve verzi minimálně "2.31.0", použijte "az upgrade" příkaz pro povýšení Azure CLI na nejnovější verzi, zároveň je nutné mít nainstalované rozšíření Azure CLI "aks-preview" v minimální verzi "0.5.49"
 
