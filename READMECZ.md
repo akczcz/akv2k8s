@@ -18,9 +18,9 @@ Cílem tohoto projektu je:
 
 
 # Co není součástí projektu
-- Declarative way of infrastructure deployment (which should be done as DevOps principles are part of Cloud Native architecture)
-- Using Continuous Integration/ Continuous Deployment (CI/CD) pipelines (as such is best practice to use in Cloud Native architecture)
-- Mapping of secrets by akv2k8s to application pods directelly (using sidecar container) without syncing to kubernetes secrets (as it can be another way of deployment akv2k8s project, see akv2k8s documentation for details)
+- deklarativní způsob deploymentu (který by měl být použit společně s DevOps principy, jako součást Cloud Native architektury), v tomto projektu provádíme deployment deklarativním způsobem pouze u částí deploymentu do kubernetes
+- využítí Using Continuous Integration/ Continuous Deployment (CI/CD) pipelines (taktéž jako best practice pro Cloud Native architekturu)
+- mapování secrets projektem akv2k8s do aplikačního kontejneru napřímo (s použitím sidecar kontejneru) bez synchronizace do kubernetes secrets (jedná se o další způsob implementace projektu akv2k8s, pro více informací využijte dokumentaci projektu)  
 
 # Prerequisities
 You need such prerequisities:
