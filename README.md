@@ -519,7 +519,14 @@ kubectl create deployment nginx --image=nginx --dry-run=client --namespace=app -
 ```
 Command will use dry run to create nginx.yaml deployment file and prepare it for deployment of nginx image from public registry of https://hub.docker.com, with latest tag, and name such deployment as "nginx" and put it into our "app" namespace, where we allready synced secrets from AzureKeyVault.
 
-If you look at this file by cut command you should see something similar to:
+If you look at this file by cut command:
+```
+# Go to the manigests folder if you did not so far
+cd ~/manifests
+cat nginx.yaml
+```
+
+.., you should see something similar to:
 ```
 apiVersion: apps/v1
 kind: Deployment

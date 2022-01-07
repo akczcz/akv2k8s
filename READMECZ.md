@@ -512,15 +512,22 @@ Z výstupu bychom měli dostat dekódovaný obsah :)
 
 ### Vytvoření testovací aplikace a mapování objektů/secrets
 
-Now let's try to deploy easy application and reference such secrets from an application, to test whole concept.
+Nyní si zkusme vytvořit jednoduchou testovací aplikaci a namapovat pro ni secrets ve formě proměnných, abychom otestovali celý koncept:
 ```
 # Go to the manigests folder if you did not so far
 cd ~/manifests
 kubectl create deployment nginx --image=nginx --dry-run=client --namespace=app -o yaml > nginx.yaml
 ```
-Command will use dry run to create nginx.yaml deployment file and prepare it for deployment of nginx image from public registry of https://hub.docker.com, with latest tag, and name such deployment as "nginx" and put it into our "app" namespace, where we allready synced secrets from AzureKeyVault.
+Přízak použije tzv. dry-run, tj s pomocí výstupu do yaml formátu a přesměrováním do souboru provede vytvoření základního yaml konfiguračního souboru, který definuje deployment typu deployment a použije k tomu image kontejneru nginx z veřejně přístupného registru https://hub.docker.com, který je označen tagem latest, pojmenuje takový deployment "nginx" and vytvoří ho do namespace který se jmenuje "app", kde jsou již synchronizované secrets, které později použijeme.
 
-If you look at this file by cut command you should see something similar to:
+V případě že se na obsah souboru podáváte:
+```
+# Go to the manigests folder if you did not so far
+cd ~/manifests
+cat nginx.yaml
+```
+
+měli byste vidět obsah podobný tomuto výstupu:
 ```
 apiVersion: apps/v1
 kind: Deployment
@@ -549,18 +556,18 @@ spec:
 status: {}
 ```
 
-If you apply such deployment file, it will create deployment,replicaset and pods. Let's try it, run command in manifests directory:
+Nyní aplikujte manifest soubor do kubernetes clusteru, vytvoříte tím deployment, replicaset a pod:
 ```
 cd ~/manifests
 kubectl apply -f  nginx.yaml
 ```
 
-Let's check what was created by running command:
+Zkontrolujte co jste vytvořili:
 ```
 kubectl -n app get deploy,pod,rs,service
 ```
 
-You should see output similar to:
+měli byste vidět obsah podobný tomuto výstupu:
 ```
 NAME                    READY   UP-TO-DATE   AVAILABLE   AGE
 deployment.apps/nginx   1/1     1            1           33s
@@ -571,15 +578,15 @@ pod/nginx-6799fc88d8-cgc6z   1/1     Running   0          33s
 NAME                               DESIRED   CURRENT   READY   AGE
 replicaset.apps/nginx-6799fc88d8   1         1         1       33s
 ```
-So, we created one deployment, one replicaset and one deployment.
+Jak vidíte, vytvořili jsme 1 x deployment, 1 x replicaset a 1x deployment.
 
-Try to run command inside pod end look, whether there are any environment variables now, we will run ```printenv``` command inside container, do not forget to exchange pod name with your real one:
+Nyní zkuste pustit příkaz uvnitř kontejneru, v podu, kde zkusíme vypsat pomocí příkazu ```printenv``` všechny proměnné, nezapomeňte zaměnit název podu za ten váš:
 ```
 # change pod name nginx-6799fc88d8-cgc6z with your real one
 kubectl -n app exec nginx-6799fc88d8-cgc6z it -- printenv
 ```
 
-You should see output similar to:
+měli byste vidět obsah podobný tomuto výstupu:
 ```
 PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 HOSTNAME=nginx-6799fc88d8-cgc6z
@@ -596,11 +603,11 @@ KUBERNETES_SERVICE_PORT=443
 KUBERNETES_SERVICE_PORT_HTTPS=443
 HOME=/root
 ```
-Remember this output ... we will try to inject into variables our mapped secrets from kubernetes secrets, which is our goal.
+Pamatujte si tento výstup (zkopírujte si ten obsah někam pro budoucí porovnání) ... zkusíme nyní do proměnných přidat hodnoty z kubernetes secrets což je cíl našeho labu.
 
-If we edit deployment file and apply file again (that is what DevOps pipelines should do after commit or pull request), then deployment will create new replicaset which will create new pods.
+Jestli zeditujeme opět yaml manifest soubor a znova jej zaplikujeme, tak nám vytvoří nový replicaset a nové pody. (v reálném projektu to však za vás dělají agenti které spouští vaše DevOps pipelines)
 
-Let's edit deployment file and add reference to its secrets, so add to deployment line new values (marked with commend #added new line), you can also delete unnecessary fields like timestamps and status:
+Zeditujme nyní manifest soubor a přidejme reference na secrets, pro snažší orientaci jsem položky označil poznámkou s textem "added new line", zároveň můžete smazat nepotřebné řádky jako jsou timespamps a status:
 ``` yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -636,24 +643,25 @@ spec:
         name: nginx
         resources: {}
 ```
+Uložte změny ":wq" ve vimu.
 
-And then, apply such changes, so run again:
+A nyní proveďte znovu aplikaci změn:
 ```
 cd ~/manifests
 kubectl apply -f  nginx.yaml
 ```
 
-If you did not create any error you should see output similar to:
+Jestli neuvidíte nějakou chybovou hlášku, tak byste měli obdržet výstup podobný tomuto:
 ```
 deployment.apps/nginx configured
 ```
 
-Look at the new container created:
+Podívejte se co jste vytvořili:
 ```
 kubectl -n app get deploy,pod,rs,service
 ```
 
-Now you should receive out with new replicaset and new pod:
+Měli byste obdržet výstup, který ukazuje, že došlo k vytvoření nového replicasetu a podu:
 ```
 NAME                    READY   UP-TO-DATE   AVAILABLE   AGE
 deployment.apps/nginx   1/1     1            1           41m
@@ -667,13 +675,13 @@ replicaset.apps/nginx-6799fc88d8   0         0         0       41m
 replicaset.apps/nginx-67cfb48f7c   1         1         1       99s
 ```
 
-Let's finally look at the new pod environment variable, do not forget to exchange the name of pod in cmdlet bellow with your new one:
+Nyní konečně zkusme znova vypsat proměnné zevnitř kontejneru, opět nezapomeňte nahradit název podu v příkazu níže za ten váš:
 ```
 # change pod name nginx-67cfb48f7c-lwwnj with your real one
 kubectl -n app exec nginx-67cfb48f7c-lwwnj it -- printenv
 ```
 
-As final output you should receive your environment values from Azure KeyVault resp. kubernetes secrets:
+Měli byste obdržet výstup zobrazující taktéž proměnné, které mají stejné hodnoty jak ty v Azure Key Vaults:
 ```
 PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 HOSTNAME=nginx-67cfb48f7c-lwwnj
@@ -694,11 +702,11 @@ HOME=/root
 ```
 ![image](/img/printenv.PNG)
 
-If you come to this point, you reached our goal, you synced Azure KeyVault secrets to kubernetes secrets and mapped them to application.  
+Jestli jste došli až se, tak jste vyzkoušeli cíl tohoto projektu, synchronizovali jste Azure KeyVault secrets do kubernetes secrets a namapovali je přes proměnné do aplikace. 
   
-Congratulations !!!  
+Gratuluji Vám !!!  
 
-Now you can delete your resource group to clean resources in your LAB:
+Na konec nezapomeňte smazat všechny vytvořené objekty v LABu, tj smazat celou resource group:
 ``` azcli
 az group delete --resource-group $GROUP_NAME
 ```
